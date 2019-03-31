@@ -27,41 +27,11 @@ idorvector: ID
 
 instruction: LCURLY expression* RCURLY;
 
-expression: assignation | structure | subrutinecall SEMICOLON;
+expression: assignation SEMICOLON | structure | subrutinecall SEMICOLON | returnG SEMICOLON;
 
 assignation: idorvector ASSIGN assignation1;
 
 assignation1: operation | list;
-
-operation: operation PLUS operation1
-		| operation MINUS operation1
-		| operation1;
-
-operation1: operation1 TIMES operation2
-		| operation1 DIVIDE operation2
-		| operation2;
-		
-operation2: assignation
-		| NEGATE operation2
-		| data_auxiliar
-		| LPAREN operation RPAREN
-		| subrutinecall;
-		
-data_auxiliar: NUMBER | STR | BOOL;
-
-structure: ifG | whileG | forG | switchG | repeat;
-
-subrutinecall: ID LPAREN arguments? RPAREN
-			| ID POINT subrutinecall;
-			
-arguments: operation arguments1*;
-arguments1: COMMA operation;
-
-list: LCURLY data_auxiliar list1* RCURLY | LCURLY RCURLY;
-list1: COMMA data_auxiliar;
-
-ifG: IF condition instruction if1?;
-if1: ELSE instruction;
 
 condition: condition OR condition1
 		| condition1;
@@ -76,16 +46,49 @@ condition2: condition2 EQUALS condition3
 condition3: condition3 COMP operation 
 		| operation
 		| LPAREN condition RPAREN;
+
+operation: operation PLUS operation1
+		| operation MINUS operation1
+		| operation1;
+
+operation1: operation1 TIMES operation2
+		| operation1 DIVIDE operation2
+		| operation2;
+		
+operation2: idorvector
+		| NEGATE operation2
+		| data_auxiliar
+		| LPAREN operation RPAREN
+		| subrutinecall;
+		
+data_auxiliar: NUMBER | BOOL | MINUS NUMBER;
+
+structure: ifG | whileG | forG | switchG | repeat;
+
+subrutinecall: ID LPAREN arguments? RPAREN
+			| ID POINT subrutinecall;
+
+returnG: RETURN arguments2;
+			
+arguments: arguments2 arguments1*;
+arguments1: COMMA arguments2;
+arguments2: STR | operation;
+
+list: LCURLY data_auxiliar list1* RCURLY | LCURLY RCURLY;
+list1: COMMA data_auxiliar;
+
+ifG: IF condition instruction if1?;
+if1: ELSE instruction;
 		
 whileG: WHILE condition instruction;
 
-forG: FOR LPAREN assignation for1 RPAREN instruction;
+forG: FOR assignation for1 instruction;
 for1: TO operation INC operation
 	| TO operation
 	| DOWNTO operation DEC operation
 	| DOWNTO operation;
 	
-switchG: SWITCH LPAREN idorvector RPAREN LCURLY switch1? RCURLY;
+switchG: SWITCH idorvector LCURLY switch1? RCURLY;
 switch1: switch2* DEFAULT COLON expression*;
 switch2: switch3 COLON expression* BREAK SEMICOLON;
 switch3: NUMBER | STR;
@@ -167,8 +170,8 @@ RSQUARE: ']';
 
 ASSIGN: '<-';
 
-COMMENT: [#.*] -> skip;
-STR: [".*"];
+COMMENT: [#].*[#] -> skip;
+STR: ["][a-zA-Z_0-9/\-\.,;]*["];
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 NUMBER: [0-9]+;
 
