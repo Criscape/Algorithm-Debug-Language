@@ -1,4 +1,3 @@
-
 package com.myorg.debuglanguage.interpreter;
 import java.io.IOException;
 
@@ -18,7 +17,7 @@ public class Main {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		debugGrammarParser parser = new debugGrammarParser(tokens);
 
-		debugGrammarParser.StartContext tree = parser.start();
+		debugGrammarParser.ProgramContext tree = parser.program();
 
 		debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
 		visitor.visit(tree);
