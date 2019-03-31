@@ -1,5 +1,14 @@
 grammar debugGrammar;
 
+@parser::header {
+	import java.util.Map;
+	import java.util.HashMap;
+}
+
+@parser::members {
+	Map<String, Object> symbolTable = new HashMap<>();
+}
+
 program: subrutine* main;
 
 main: MAIN LPAREN main_parameters? RPAREN instruction;
@@ -88,10 +97,11 @@ for1: TO operation INC operation
 	| DOWNTO operation DEC operation
 	| DOWNTO operation;
 	
-switchG: SWITCH idorvector LCURLY switch1? RCURLY;
+switchG: SWITCH switch4 LCURLY switch1? RCURLY;
 switch1: switch2* DEFAULT COLON expression*;
 switch2: switch3 COLON expression* BREAK SEMICOLON;
 switch3: NUMBER | STR;
+switch4: idorvector | LPAREN idorvector RPAREN;
 
 repeat: REPEAT instruction UNTIL condition SEMICOLON;
 
