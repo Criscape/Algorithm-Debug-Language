@@ -1,23 +1,4 @@
-float function test(inout int a, in int a[1][4]){
-   int a;
-   float b;
-   boolean flag;
-}
-{  
-   switch a[1]{
-      3: print("Hola"); break;
-      default: print("hola");
-   }
-
-   while(a<c){
-      c<-c+1;
-   }
-
-   return a;
-}
-
 main(){
-   if(t=a and t=e){
-      test();
-   }
+	a[3]<-a[2];
+	print("hola");
 }

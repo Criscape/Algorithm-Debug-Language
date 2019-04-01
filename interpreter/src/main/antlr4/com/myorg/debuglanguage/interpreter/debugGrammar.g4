@@ -3,6 +3,9 @@ grammar debugGrammar;
 @parser::header {
 	import java.util.Map;
 	import java.util.HashMap;
+	import java.util.List;
+	import java.util.ArrayList;
+	import com.myorg.debuglanguage.interpreter.ast.*;
 }
 
 @parser::members {
@@ -12,8 +15,7 @@ grammar debugGrammar;
 program: subrutine* main;
 
 main: MAIN LPAREN main_parameters? RPAREN instruction;
-main_parameters: DATATYPE ID COMMA
- DATATYPE LSQUARE RSQUARE ID;
+main_parameters: DATATYPE ID COMMA DATATYPE LSQUARE RSQUARE ID;
 
 subrutine: function | procedure;
 
@@ -24,23 +26,19 @@ features: LPAREN parameters? RPAREN
 	LCURLY declaration* RCURLY
 	instruction;
 
-parameters: IOTYPE DATATYPE idorvector parameters1*;
-parameters1: COMMA parameters;
+parameters: IOTYPE DATATYPE idorvector (COMMA IOTYPE DATATYPE idorvector)*;
 
-declaration: DATATYPE idorvector declaration1* SEMICOLON;
-declaration1: COMMA idorvector;
+declaration: DATATYPE idorvector (COMMA DATATYPE idorvector)* SEMICOLON;
 
-idorvector: ID
-			| ID LSQUARE NUMBER? RSQUARE
-			| ID LSQUARE NUMBER? RSQUARE LSQUARE NUMBER? RSQUARE;
+idorvector returns [ASTNode node]: ID /*{$node = symbolTable.get($ID.text);}*/
+			| ID LSQUARE NUMBER RSQUARE 
+			| ID LSQUARE NUMBER RSQUARE LSQUARE NUMBER RSQUARE;
 
 instruction: LCURLY expression* RCURLY;
 
 expression: assignation SEMICOLON | structure | subrutinecall SEMICOLON | returnG SEMICOLON;
 
-assignation: idorvector ASSIGN assignation1;
-
-assignation1: operation | list;
+assignation: idorvector ASSIGN (operation | list);
 
 condition: condition OR condition1
 		| condition1;
@@ -56,15 +54,19 @@ condition3: condition3 COMP operation
 		| operation
 		| LPAREN condition RPAREN;
 
-operation: operation PLUS operation1
-		| operation MINUS operation1
-		| operation1;
+operation returns [ASTNode node]: t1=operation {$node = $t1.node;}
+ PLUS operation1 {$node = new Evaluation($node, $operation1.node, $PLUS.text);}
+ | t2=operation {$node = $t2.node;} 
+ MINUS operation1 {$node = new Evaluation($node, $operation1.node, $MINUS.text);}
+ | operation1 {$node = $operation1.node;};
 
-operation1: operation1 TIMES operation2
-		| operation1 DIVIDE operation2
-		| operation2;
+operation1 returns [ASTNode node]: t1=operation1 {$node = $t1.node;}
+ TIMES operation2 {$node = new Evaluation($node, $operation2.node, $TIMES.text);}
+ | t2=operation1 {$node = $t2.node;}
+ DIVIDE operation2 {$node = new Evaluation($node, $operation2.node, $DIVIDE.text);}
+ | operation2 {$node = $operation2.node;};
 		
-operation2: idorvector
+operation2 returns [ASTNode node]: idorvector {$node = $idorvector.node;}
 		| NEGATE operation2
 		| data_auxiliar
 		| LPAREN operation RPAREN
@@ -75,19 +77,19 @@ data_auxiliar: NUMBER | BOOL | MINUS NUMBER;
 structure: ifG | whileG | forG | switchG | repeat;
 
 subrutinecall: ID LPAREN arguments? RPAREN
-			| ID POINT subrutinecall;
+{
+	if( $ID.text.equals("print") ) System.out.println("ejemplo");
+}
+| ID POINT subrutinecall;
 
-returnG: RETURN arguments2;
+returnG: RETURN argreturn;
 			
-arguments: arguments2 arguments1*;
-arguments1: COMMA arguments2;
-arguments2: STR | operation;
+arguments: argreturn (COMMA argreturn)*;
+argreturn: (STR | operation);
 
-list: LCURLY data_auxiliar list1* RCURLY | LCURLY RCURLY;
-list1: COMMA data_auxiliar;
+list: LCURLY data_auxiliar (COMMA data_auxiliar)* RCURLY | LCURLY RCURLY;
 
-ifG: IF condition instruction if1?;
-if1: ELSE instruction;
+ifG: IF condition instruction (ELSE instruction)?;
 		
 whileG: WHILE condition instruction;
 
@@ -97,11 +99,9 @@ for1: TO operation INC operation
 	| DOWNTO operation DEC operation
 	| DOWNTO operation;
 	
-switchG: SWITCH switch4 LCURLY switch1? RCURLY;
-switch1: switch2* DEFAULT COLON expression*;
-switch2: switch3 COLON expression* BREAK SEMICOLON;
-switch3: NUMBER | STR;
-switch4: idorvector | LPAREN idorvector RPAREN;
+switchG: SWITCH switch2 LCURLY (switch1* DEFAULT COLON expression*)? RCURLY;
+switch1: (NUMBER | STR) COLON expression* BREAK SEMICOLON;
+switch2: idorvector | LPAREN idorvector RPAREN;
 
 repeat: REPEAT instruction UNTIL condition SEMICOLON;
 
