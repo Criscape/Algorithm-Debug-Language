@@ -12,9 +12,9 @@ grammar debugGrammar;
 	Map<String, Object> symbolTable = new HashMap<>();
 }
 
-program: subrutine* main;
+program: subrutine* | main;
 
-main: MAIN LPAREN main_parameters? RPAREN instruction;
+main returns [ASTNode node]: MAIN LPAREN main_parameters? RPAREN instruction {$node = $instruction.node;};
 main_parameters: DATATYPE ID COMMA DATATYPE LSQUARE RSQUARE ID;
 
 subrutine: function | procedure;
@@ -34,7 +34,7 @@ idorvector returns [ASTNode node]: ID /*{$node = symbolTable.get($ID.text);}*/
 			| ID LSQUARE NUMBER RSQUARE 
 			| ID LSQUARE NUMBER RSQUARE LSQUARE NUMBER RSQUARE;
 
-instruction: LCURLY expression* RCURLY;
+instruction returns [ASTNode node]: LCURLY expression* RCURLY;
 
 expression: assignation SEMICOLON | structure | subrutinecall SEMICOLON | returnG SEMICOLON;
 
@@ -66,19 +66,22 @@ operation1 returns [ASTNode node]: t1=operation1 {$node = $t1.node;}
  DIVIDE operation2 {$node = new Evaluation($node, $operation2.node, $DIVIDE.text);}
  | operation2 {$node = $operation2.node;};
 		
-operation2 returns [ASTNode node]: idorvector {$node = $idorvector.node;}
+operation2 returns [ASTNode node]: idorvector 
 		| NEGATE operation2
 		| data_auxiliar
 		| LPAREN operation RPAREN
 		| subrutinecall;
 		
-data_auxiliar: NUMBER | BOOL | MINUS NUMBER;
+data_auxiliar returns [ASTNode node]: 
+		NUMBER {$node = new Constant(Integer.parseInt($NUMBER.text));}
+		| BOOL {$node = new Constant(Boolean.parseBoolean($BOOL.text));}
+		| MINUS NUMBER {$node = new Constant(Integer.parseInt($NUMBER.text)*-1);} ;
 
 structure: ifG | whileG | forG | switchG | repeat;
 
 subrutinecall: ID LPAREN arguments? RPAREN
 {
-	if( $ID.text.equals("print") ) System.out.println("ejemplo");
+	if( $ID.text.equals("print") ) System.out.println(symbolTable);
 }
 | ID POINT subrutinecall;
 
