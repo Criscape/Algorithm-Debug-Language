@@ -14,5 +14,6 @@ main(){
 	
 	int numero;
 	print("");
+	print("");
 	print(fibo(5));
 }
