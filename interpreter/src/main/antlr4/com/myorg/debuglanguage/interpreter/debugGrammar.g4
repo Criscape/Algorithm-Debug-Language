@@ -88,9 +88,10 @@ DATATYPE t1=idorvector {ids.add($t1.node);}
  	$node = new Declaration($DATATYPE.text,ids);
  };
 
-idorvector returns [ASTNode node]: ID {$node = new Constant($ID.text,"");}
-			| ID LSQUARE t0=NUMBER RSQUARE {$node = new Constant($ID.text+"["+$t0.text+"]","");}
-			| ID LSQUARE t1=NUMBER RSQUARE LSQUARE t2=NUMBER RSQUARE {$node = new Constant($ID.text+"["+$t1.text+"]"+"["+$t2.text+"]","");};
+idorvector returns [ASTNode node]: d2=ID {$node = new Constant($d2.text,"");}
+			| d3=ID LSQUARE t0=NUMBER RSQUARE {$node = new Constant($d3.text+"["+$t0.text+"]","");}
+			| d4=ID LSQUARE t1=NUMBER RSQUARE LSQUARE t2=NUMBER RSQUARE {$node = new Constant($d4.text+"["+$t1.text+"]"+"["+$t2.text+"]","");}
+			| d5=ID LSQUARE d1=ID RSQUARE {$node = new Constant($d5.text+"["+$d1.text+"]","");};
 
 instruction returns [List<ASTNode> node]: LCURLY {List<ASTNode> body = new ArrayList<>();}
  (expression {body.add($expression.node);})* RCURLY {$node = body;};
@@ -155,7 +156,7 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | repeat {$node = $repeat.node;};
 
 subrutinecall returns [ASTNode node]: t1=ID LPAREN arguments? RPAREN {$node = new SubRutExec($t1.text,$arguments.node);}
-| t2=ID POINT subrutinecall t3=ID LPAREN arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t2.text,$arguments.node);};
+| t2=ID POINT t3=ID LPAREN arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$arguments.node);};
 
 returnG returns [ASTNode node]: RETURN operation {$node = new Retorno($operation.node);};
 			
@@ -203,22 +204,22 @@ forG returns [ASTNode node]: FOR LPAREN assignation for1 RPAREN instruction
 
 for1 returns [ASTNode[] node]: TO t1=operation INC t2=operation
 {
-	ASTNode[] x = {$t1.node,$t2.node,new Constant("asc","str")};
+	ASTNode[] x = {$t1.node,$t2.node,new Constant("asc","")};
 	$node = x;
 }
 	| TO t3=operation
 {
-	ASTNode[] y = {$t3.node,new Constant(1,""),new Constant("asc","str")};
+	ASTNode[] y = {$t3.node,new Constant(1,""),new Constant("asc","")};
 	$node = y;
 }
 	| DOWNTO t4=operation DEC t5=operation
 {
-	ASTNode[] z = {$t4.node,$t5.node,new Constant("dec","str")};
+	ASTNode[] z = {$t4.node,$t5.node,new Constant("dec","")};
 	$node = z;
 }
 	| DOWNTO t6=operation
 {
-	ASTNode[] w = {$t6.node,new Constant(1,""),new Constant("dec","str")};
+	ASTNode[] w = {$t6.node,new Constant(1,""),new Constant("dec","")};
 	$node = w;
 };
 	
@@ -306,7 +307,7 @@ RSQUARE: ']';
 
 ASSIGN: '<-';
 
-COMMENT: [#][a-zA-Z_0-9/\-\.,;]*[#] -> skip;
+COMMENT: [#][a-zA-Z_0-9/\-\.,;{}\[\] ()\r\t\n=<>\+-\*/%\"]*[#] -> skip;
 STR: ["][a-zA-Z_0-9/\-\.,; ]*["];
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 NUMBER: [0-9]+;

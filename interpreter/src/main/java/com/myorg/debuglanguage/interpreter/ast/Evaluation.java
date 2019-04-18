@@ -21,6 +21,17 @@ public class Evaluation implements ASTNode {
 		switch (this.symbol){
 		
 			case "+":
+				if (this.operand1.execute(symbolTable, localSymbolTable) instanceof String && this.operand2.execute(symbolTable, localSymbolTable) instanceof String){
+					
+					return ((String)this.operand1.execute(symbolTable, localSymbolTable) + (String)this.operand2.execute(symbolTable, localSymbolTable));
+				}else if(this.operand1.execute(symbolTable, localSymbolTable) instanceof String){
+					
+					return ((String)this.operand1.execute(symbolTable, localSymbolTable) + (int)this.operand2.execute(symbolTable, localSymbolTable));
+				}else if(this.operand2.execute(symbolTable, localSymbolTable) instanceof String){
+					
+					return ((int)this.operand1.execute(symbolTable, localSymbolTable) + (String)this.operand2.execute(symbolTable, localSymbolTable));
+				}
+				
 				return ((int)this.operand1.execute(symbolTable, localSymbolTable) + (int)this.operand2.execute(symbolTable, localSymbolTable));
 			case "-":
 				return ((int)this.operand1.execute(symbolTable, localSymbolTable) - (int)this.operand2.execute(symbolTable, localSymbolTable));

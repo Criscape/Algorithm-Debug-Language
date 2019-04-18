@@ -17,7 +17,25 @@ public class Assign implements ASTNode {
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
 		if(localSymbolTable.containsKey(this.id.execute(symbolTable, localSymbolTable).toString())){
-			
+
+			if(this.value.execute(symbolTable, localSymbolTable) instanceof ListSave){
+				
+				if(localSymbolTable.containsKey(this.id.execute(symbolTable, localSymbolTable).toString()+"[0]")){
+					
+					ListSave listsave = (ListSave)this.value.execute(symbolTable, localSymbolTable);
+					
+					TypeValue reference = (TypeValue)localSymbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString()+"[0]");
+					
+					for(int i = 0; i < reference.getVectorSize(); i++){
+						
+						TypeValue value_put = (TypeValue)localSymbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString()+"["+i+"]");
+						value_put.setValue(listsave.getList().get(i));
+						localSymbolTable.put(this.id.execute(symbolTable, localSymbolTable).toString()+"["+i+"]", value_put);
+					}
+					
+					return null;
+				}
+			}
 			TypeValue a = (TypeValue)localSymbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString());
 			a.setValue(this.value.execute(symbolTable, localSymbolTable));
 			localSymbolTable.put(this.id.execute(symbolTable, localSymbolTable).toString(), a);

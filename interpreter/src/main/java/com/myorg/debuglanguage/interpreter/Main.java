@@ -18,7 +18,7 @@ public class Main {
 		debugGrammarParser parser = new debugGrammarParser(tokens);
 
 		debugGrammarParser.ProgramContext tree = parser.program();
-
+				
 		debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
 		visitor.visit(tree);
 

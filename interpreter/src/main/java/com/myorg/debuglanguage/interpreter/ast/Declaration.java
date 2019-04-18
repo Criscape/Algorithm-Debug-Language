@@ -26,10 +26,13 @@ public class Declaration implements ASTNode {
 			if (key.contains("[")){
 				
 				int index = key.indexOf('[')+1;
-				int size = Integer.parseInt(key.substring(index, index+1));
+				int finalIndex = key.indexOf(']');
+				int size = Integer.parseInt(key.substring(index, finalIndex));
+				localSymbolTable.put(key.substring(0, index-1), null);
 				for (int i = 0; i< size; i++){
 					
 					TypeValue x = new TypeValue(this.dataType,"in",null);
+					x.setVectorSize(size);
 					localSymbolTable.put(key.substring(0, index-1)+"["+i+"]", x);
 				}
 			}else{
