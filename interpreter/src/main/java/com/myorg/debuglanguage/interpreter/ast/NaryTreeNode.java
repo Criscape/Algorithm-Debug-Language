@@ -1,6 +1,7 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class NaryTreeNode {
 	
@@ -8,13 +9,15 @@ public class NaryTreeNode {
     private final ArrayList<NaryTreeNode> children;
     private NaryTreeNode father;
     private boolean appendable;
+    private Map<String,Object> symbolTable;
 
-    public NaryTreeNode(String LABEL, NaryTreeNode father){
+    public NaryTreeNode(String LABEL, NaryTreeNode father, Map<String,Object> symbolTable){
     	
         this.LABEL = LABEL;
         this.children = new ArrayList<>();
         this.father = father;
         this.appendable = true;
+        this.symbolTable = symbolTable;
     }
 
     private boolean addChild(NaryTreeNode node){
@@ -22,9 +25,9 @@ public class NaryTreeNode {
         return children.add(node);
     }
 
-    public boolean addChild(String label, NaryTreeNode father){
+    public boolean addChild(String label, NaryTreeNode father, Map<String,Object> symbolTable){
     	
-        return addChild(new NaryTreeNode(label, father));
+        return addChild(new NaryTreeNode(label, father, symbolTable));
     }
 
     public ArrayList<NaryTreeNode> getChildren(){
@@ -68,7 +71,11 @@ public class NaryTreeNode {
     	print(node);
     }
 
-    public static void print(NaryTreeNode root){
+    public Map<String, Object> getSymbolTable() {
+		return symbolTable;
+	}
+
+	public static void print(NaryTreeNode root){
     	
         printUtil(root, 0);
     }
