@@ -1,5 +1,7 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
+import java.util.Map;
+
 public class Evaluation implements ASTNode {
 	
 	private ASTNode operand1;
@@ -14,18 +16,18 @@ public class Evaluation implements ASTNode {
 	}
 
 	@Override
-	public Object execute() {
+	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
 		switch (this.symbol){
 		
 			case "+":
-				return ((int)this.operand1.execute() + (int)this.operand2.execute());
+				return ((int)this.operand1.execute(symbolTable, localSymbolTable) + (int)this.operand2.execute(symbolTable, localSymbolTable));
 			case "-":
-				return ((int)this.operand1.execute() - (int)this.operand2.execute());
+				return ((int)this.operand1.execute(symbolTable, localSymbolTable) - (int)this.operand2.execute(symbolTable, localSymbolTable));
 			case "*":
-				return ((int)this.operand1.execute() * (int)this.operand2.execute());
+				return ((int)this.operand1.execute(symbolTable, localSymbolTable) * (int)this.operand2.execute(symbolTable, localSymbolTable));
 			case "/":
-				return ((int)this.operand1.execute() / (int)this.operand2.execute());
+				return ((int)this.operand1.execute(symbolTable, localSymbolTable) / (int)this.operand2.execute(symbolTable, localSymbolTable));
 			default:
 				return null;
 		}

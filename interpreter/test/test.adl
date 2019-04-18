@@ -1,4 +1,19 @@
+int function fibo(in int numero){ int numero_return; }
+{
+	if(numero=1){
+		numero_return<-0;
+	}
+	else{
+		numero_return<-fibo(numero/2)+1;	
+	}
+	
+	return numero_return;
+}
+
 main(){
-	a[3]<-a[2];
-	print("hola");
+	
+	int numero;
+	print("");
+	print("");
+	print(fibo(5));
 }
