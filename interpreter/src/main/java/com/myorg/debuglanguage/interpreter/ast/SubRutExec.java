@@ -46,13 +46,13 @@ public class SubRutExec implements ASTNode {
 			
 			if(auxTree == null){
 				
-				auxTree = new NaryTreeNode(((TypeValue)newLocal.get("numero")).getValue().toString(),null);
+				auxTree = new NaryTreeNode(((TypeValue)newLocal.get("numero")).getValue().toString(),null,newLocal);
 				this.subrutine.setLast(auxTree);
 			}else{
 				
 				if(auxTree.getAppendable()){
 					
-					auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree);
+					auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree, newLocal);
 					this.subrutine.setLast(auxTree.getLastChild());
 				}else{
 											
@@ -61,7 +61,7 @@ public class SubRutExec implements ASTNode {
 							auxTree = auxTree.getFather();
 						}*/
 						auxTree = auxTree.getFather();
-						auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree);
+						auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree, newLocal);
 						this.subrutine.setLast(auxTree.getLastChild());
 						
 						
@@ -150,7 +150,7 @@ public class SubRutExec implements ASTNode {
 
 			if(auxTree.getFather() == null){
 				
-				NaryTreeNode.printLast(auxTree);
+				NaryTreeNode.print(auxTree);
 			}
 			
 		}else{
@@ -170,6 +170,10 @@ public class SubRutExec implements ASTNode {
 						System.out.println(x.toString());
 					}
 					break;
+				
+				case "get":
+					
+					
 			}
 		}
 		
