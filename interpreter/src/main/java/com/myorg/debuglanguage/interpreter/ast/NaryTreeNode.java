@@ -3,6 +3,9 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.swing.JPanel;
+import com.myorg.debuglanguage.interpreter.*;
+
 public class NaryTreeNode {
 	
     private final String LABEL;
@@ -91,5 +94,17 @@ public class NaryTreeNode {
         for (NaryTreeNode child : node.getChildren()) {
             printUtil(child, depth + 1);
         }
+    }
+    
+    public JPanel getdibujo() {
+        return new ArbolExpresionGrafico(this);
+    }
+    
+    public int getChildrenSize(){
+    	return this.children.size();
+    }
+    
+    public String getLabel(){
+    	return this.LABEL;
     }
 }
