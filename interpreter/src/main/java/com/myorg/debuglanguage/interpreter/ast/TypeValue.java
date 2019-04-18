@@ -5,6 +5,7 @@ public class TypeValue {
 	private String dataType;
 	private String ioType;
 	private Object value;
+	private int vectorSize;
 	
 	public TypeValue(String dataType, String ioType, Object value) {
 		super();
@@ -27,6 +28,14 @@ public class TypeValue {
 	
 	public void setValue(Object value){
 		this.value = value;
+	}
+
+	public int getVectorSize() {
+		return vectorSize;
+	}
+
+	public void setVectorSize(int vectorSize) {
+		this.vectorSize = vectorSize;
 	}
 	
 }

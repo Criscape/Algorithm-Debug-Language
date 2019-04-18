@@ -30,7 +30,7 @@ public class For implements ASTNode {
 		int x_limit = (int)this.limit.execute(symbolTable, localSymbolTable);
 		int x_increment = (int)this.increment.execute(symbolTable, localSymbolTable);
 		String x_type = this.ascDecType.execute(symbolTable, localSymbolTable).toString();
-		
+
 		if (x_type.equals("asc")){
 			
 			for (int i = Integer.parseInt(a.getValue().execute(symbolTable, localSymbolTable).toString()); i <= x_limit; i = i + x_increment){

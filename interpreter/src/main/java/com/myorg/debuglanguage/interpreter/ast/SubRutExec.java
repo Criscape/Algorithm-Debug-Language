@@ -168,12 +168,22 @@ public class SubRutExec implements ASTNode {
 					}else if(x instanceof String || x instanceof Boolean){
 						
 						System.out.println(x.toString());
+					}else{
+						
+						System.out.println(x);
 					}
 					break;
 				
-				case "get":
-					
-					
+			}
+			
+			if (this.name.matches("\\w+\\."+"get")){
+
+				int get_x = (Integer)args.get(0).execute(symbolTable, localSymbolTable);
+				
+				String nombre = this.name.substring(0,this.name.indexOf("."));
+				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
+				
+				dato = list_generated.getList().get(get_x);
 			}
 		}
 		
