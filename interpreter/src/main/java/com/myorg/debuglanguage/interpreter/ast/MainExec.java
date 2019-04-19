@@ -23,7 +23,8 @@ public class MainExec implements ASTNode,java.io.Serializable {
 		localSymbolTable = new HashMap<>();
 		
 		for (ASTNode n : this.body) {
-			n.execute(symbolTable, localSymbolTable);
+			//n.execute(symbolTable, localSymbolTable);
+			((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 		}
 		
 		return null;
