@@ -28,11 +28,11 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	
 	for (ASTNode n : subrt){
 		
-		n.execute(symbolTable,localSymbolTable);
+		//n.execute(symbolTable,localSymbolTable);
 		((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 	}
 	
-	$main.node.execute(symbolTable,localSymbolTable);
+	//$main.node.execute(symbolTable,localSymbolTable);
 	((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add($main.node);
 	
 	
