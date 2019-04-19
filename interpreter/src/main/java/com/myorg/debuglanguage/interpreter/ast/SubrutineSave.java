@@ -13,6 +13,7 @@ public class SubrutineSave {
 	private List<ASTNode> body;
 	private NaryTreeNode last;
 	private List<NaryTreeNode> arboles;
+	private int counter;
 	
 	public SubrutineSave(String funcOrProc,String name, List<ASTNode> parameters, List<ASTNode> declarations, List<ASTNode> body) {
 		super();
@@ -22,6 +23,7 @@ public class SubrutineSave {
 		this.declarations = declarations;
 		this.body = body;
 		this.arboles = new ArrayList<>();
+		this.last = null;
 	}
 
 	public String getName() {
@@ -59,4 +61,13 @@ public class SubrutineSave {
 	public void setLast(NaryTreeNode last){
 		this.last = last;
 	}
+
+	public int getCounter() {
+		return counter;
+	}
+
+	public void setCounter(int counter) {
+		this.counter = counter;
+	}
+	
 }
