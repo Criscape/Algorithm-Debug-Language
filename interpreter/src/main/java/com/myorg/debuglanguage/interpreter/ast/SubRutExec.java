@@ -30,8 +30,6 @@ public class SubRutExec implements ASTNode {
 			
 			Map<String,Object> newLocal = new HashMap<>();
 			
-			
-			
 			for (int i = 0; i < this.subrutine.getParameters().size(); i++){
 				
 				Parameter parameter = (Parameter)this.subrutine.getParameters().get(i);
@@ -46,25 +44,30 @@ public class SubRutExec implements ASTNode {
 			}
 			
 			NaryTreeNode auxTree = this.subrutine.getLast();
-			
+
 			if(auxTree == null){
 				
-				auxTree = new NaryTreeNode(((TypeValue)newLocal.get("numero")).getValue().toString(),null,newLocal);
+				this.subrutine.setCounter(0);
+				auxTree = new NaryTreeNode(Integer.toString(this.subrutine.getCounter()),null,newLocal);
+				this.subrutine.setCounter(this.subrutine.getCounter()+1);
 				this.subrutine.setLast(auxTree);
 			}else{
 				
 				if(auxTree.getAppendable()){
 					
-					auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree, newLocal);
+					auxTree.addChild(Integer.toString(this.subrutine.getCounter()), auxTree, newLocal);
+					this.subrutine.setCounter(this.subrutine.getCounter()+1);
 					this.subrutine.setLast(auxTree.getLastChild());
+					
 				}else{
-											
+						
 						/*while(auxTree.getFather() != null  && auxTree.getFather().getAppendable() == false){
 							
 							auxTree = auxTree.getFather();
 						}*/
 						auxTree = auxTree.getFather();
-						auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree, newLocal);
+						auxTree.addChild(Integer.toString(this.subrutine.getCounter()), auxTree, newLocal);
+						this.subrutine.setCounter(this.subrutine.getCounter()+1);
 						this.subrutine.setLast(auxTree.getLastChild());
 						
 						
@@ -125,43 +128,23 @@ public class SubRutExec implements ASTNode {
 			}
 
 			auxTree = this.subrutine.getLast();
+			auxTree.setSymbolTable(newLocal);
 			auxTree.setAppendable(false);
 			
 			this.subrutine.setLast(auxTree.getFather());
 			
-			for (int i = 0; i < this.subrutine.getParameters().size(); i++){
-				
-				Parameter parameter = (Parameter)this.subrutine.getParameters().get(i);
-				
-				if(parameter.getIoType().equals("in")){
-					
-					newLocal.remove(parameter.getId());
-				}
-			}
-			
-			for (int i = 0; i < this.subrutine.getDeclarations().size(); i++){
-				
-				Declaration declare = (Declaration)this.subrutine.getDeclarations().get(i);
-
-				for(ASTNode nodo_declare: declare.getList()){
-					
-					newLocal.remove(nodo_declare.execute(symbolTable, localSymbolTable).toString());
-				}
-			}
-			
-				
-
 			if(auxTree.getFather() == null){
 				
 				//this.subrutine.getArboles().add(auxTree);
 				
-				String filename = "test/arbol-No"+NaryTreeNode.getSerialversionuid()+".ntn";
+				String filename = "test/arbol-Noo"+NaryTreeNode.getSerialversionuid()+".ntn";
+				NaryTreeNode.print(auxTree);
 				
 				try{
 					
 					FileOutputStream file = new FileOutputStream(filename);
+										
 					ObjectOutputStream out = new ObjectOutputStream(file);
-					
 					out.writeObject(auxTree);
 					
 					out.close();
@@ -170,7 +153,10 @@ public class SubRutExec implements ASTNode {
 				}catch(IOException ex){
 					
 					System.out.println("Ruta invalida.");
+					
 				}
+				
+				this.subrutine.setLast(null);
 			}
 			
 		}else{
@@ -210,7 +196,7 @@ public class SubRutExec implements ASTNode {
 				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
 
 				dato = list_generated.getList().size();
-			}else if(this.name.matches("\\w+\\."+"size")){
+			}else if(this.name.matches("\\w+\\."+"add")){
 				
 				Object object_x = args.get(0).execute(symbolTable, localSymbolTable);
 				
@@ -218,8 +204,7 @@ public class SubRutExec implements ASTNode {
 				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
 				
 				list_generated.getList().add(object_x);
-			}
-			
+			}			
 			
 		}
 		

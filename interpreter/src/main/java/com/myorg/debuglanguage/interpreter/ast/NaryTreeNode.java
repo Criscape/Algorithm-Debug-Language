@@ -135,6 +135,10 @@ public class NaryTreeNode implements java.io.Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public void setSymbolTable(Map<String, Object> symbolTable) {
+		this.symbolTable = symbolTable;
+	}
     
     
 }

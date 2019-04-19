@@ -155,8 +155,8 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | switchG {$node = $switchG.node;}
 | repeat {$node = $repeat.node;};
 
-subrutinecall returns [ASTNode node]: t1=ID LPAREN arguments? RPAREN {$node = new SubRutExec($t1.text,$arguments.node);}
-| t2=ID POINT t3=ID LPAREN arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$arguments.node);};
+subrutinecall returns [ASTNode node]: t1=ID LPAREN ss1=arguments? RPAREN {$node = new SubRutExec($t1.text,$ss1.node);}
+| t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);};
 
 returnG returns [ASTNode node]: RETURN operation {$node = new Retorno($operation.node);};
 			
