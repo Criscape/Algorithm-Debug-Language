@@ -17,6 +17,7 @@ public class NaryTreeNode implements java.io.Serializable {
     private NaryTreeNode father;
     private boolean appendable;
     private Map<String,Object> symbolTable;
+    ArbolExpresionGrafico ArbolGrafico;
 
     public NaryTreeNode(String LABEL, NaryTreeNode father, Map<String,Object> symbolTable){
     	
@@ -25,6 +26,7 @@ public class NaryTreeNode implements java.io.Serializable {
         this.father = father;
         this.appendable = true;
         this.symbolTable = symbolTable;
+        this.ArbolGrafico = new ArbolExpresionGrafico(this);
     }
 
     private boolean addChild(NaryTreeNode node){
@@ -101,7 +103,7 @@ public class NaryTreeNode implements java.io.Serializable {
     }
     
     public JPanel getdibujo() {
-        return new ArbolExpresionGrafico(this);
+        return this.ArbolGrafico;
     }
     
     public int getChildrenSize(){
@@ -111,11 +113,22 @@ public class NaryTreeNode implements java.io.Serializable {
     public String getLabel(){
     	return this.LABEL;
     }
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
     
+    public NaryTreeNode buscarPosicion(int x, int y){
+    	return this.ArbolGrafico.buscarPosicion(x, y);
+    }
     
+    public String getVariables(){
+    	String retur = "";
+    	
+    	if(this.symbolTable != null){
+    		for(String variable : symbolTable.keySet()){
+        		retur +="nombre: "+variable+" , valor: "+symbolTable.get(variable)+" , tipo: int";
+        		retur += "\n";
+        	}
+    	}
+    	
+    	return retur;
+    }
 }
 
