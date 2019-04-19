@@ -44,8 +44,7 @@ public class SubRutExec implements ASTNode {
 			}
 			
 			NaryTreeNode auxTree = this.subrutine.getLast();
-			System.out.println(this.subrutine.getName());
-			System.out.println("veces");
+
 			if(auxTree == null){
 				
 				this.subrutine.setCounter(0);
@@ -129,6 +128,7 @@ public class SubRutExec implements ASTNode {
 			}
 
 			auxTree = this.subrutine.getLast();
+			auxTree.setSymbolTable(newLocal);
 			auxTree.setAppendable(false);
 			
 			this.subrutine.setLast(auxTree.getFather());
@@ -137,7 +137,7 @@ public class SubRutExec implements ASTNode {
 				
 				//this.subrutine.getArboles().add(auxTree);
 				
-				String filename = "test/arbol-No"+NaryTreeNode.getSerialversionuid()+".ntn";
+				String filename = "test/arbol-Noo"+NaryTreeNode.getSerialversionuid()+".ntn";
 				NaryTreeNode.print(auxTree);
 				
 				try{
@@ -153,6 +153,7 @@ public class SubRutExec implements ASTNode {
 				}catch(IOException ex){
 					
 					System.out.println("Ruta invalida.");
+					
 				}
 				
 				this.subrutine.setLast(null);

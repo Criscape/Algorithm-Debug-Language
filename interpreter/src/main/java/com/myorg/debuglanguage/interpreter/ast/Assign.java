@@ -16,35 +16,39 @@ public class Assign implements ASTNode {
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
-		if(localSymbolTable.containsKey(this.id.execute(symbolTable, localSymbolTable).toString())){
+		String key = this.id.execute(symbolTable, localSymbolTable).toString();
+		Object val = this.value.execute(symbolTable, localSymbolTable);
+		
+		if(localSymbolTable.containsKey(key)){
 
-			if(this.value.execute(symbolTable, localSymbolTable) instanceof ListSave){
+			if(val instanceof ListSave){
 				
-				if(localSymbolTable.containsKey(this.id.execute(symbolTable, localSymbolTable).toString()+"[0]")){
+				if(localSymbolTable.containsKey(key+"[0]")){
 					
-					ListSave listsave = (ListSave)this.value.execute(symbolTable, localSymbolTable);
+					ListSave listsave = (ListSave)val;
 					
-					TypeValue reference = (TypeValue)localSymbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString()+"[0]");
+					TypeValue reference = (TypeValue)localSymbolTable.get(key+"[0]");
 					
 					for(int i = 0; i < reference.getVectorSize(); i++){
 						
-						TypeValue value_put = (TypeValue)localSymbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString()+"["+i+"]");
+						TypeValue value_put = (TypeValue)localSymbolTable.get(key+"["+i+"]");
 						value_put.setValue(listsave.getList().get(i));
-						localSymbolTable.put(this.id.execute(symbolTable, localSymbolTable).toString()+"["+i+"]", value_put);
+						localSymbolTable.put(key+"["+i+"]", value_put);
 					}
 					
 					return null;
 				}
 			}
-			TypeValue a = (TypeValue)localSymbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString());
-			a.setValue(this.value.execute(symbolTable, localSymbolTable));
-			localSymbolTable.put(this.id.execute(symbolTable, localSymbolTable).toString(), a);
 			
-		}else if(symbolTable.containsKey(this.id.execute(symbolTable, localSymbolTable).toString())){
+			TypeValue a = (TypeValue)localSymbolTable.get(key);
+			a.setValue(val);
+			localSymbolTable.put(key, a);
 			
-			TypeValue a = (TypeValue)symbolTable.get(this.id.execute(symbolTable, localSymbolTable).toString());
+		}else if(symbolTable.containsKey(key)){
+			
+			TypeValue a = (TypeValue)symbolTable.get(key);
 			a.setValue((Object)this.value);
-			localSymbolTable.put(this.id.execute(symbolTable, localSymbolTable).toString(), a);
+			localSymbolTable.put(key, a);
 		}
 				
 		return null;
