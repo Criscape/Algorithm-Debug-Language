@@ -1,3 +1,20 @@
+<<<<<<< HEAD
+int function fb(in int numer){int rt;}
+{
+	if(numer=0){
+		rt<-0;
+	}else{
+	
+		if(numer=1){
+			rt<-1;
+		}
+		else{
+			rt<-fb(numer-1)+fb(numer-2);
+		}
+	}
+	
+	return rt;
+=======
 #
 main(){
 	
@@ -14,7 +31,14 @@ main(){
 	}
 
 	return 0;
+>>>>>>> refs/remotes/origin/master
 }
+<<<<<<< HEAD
+
+main(){
+
+	print(fb(4));
+=======
 #
 
 int function fb(in int numer){int rt;}
@@ -37,5 +61,6 @@ int function fb(in int numer){int rt;}
 main(){
 
 	print(fb(8));
+>>>>>>> refs/remotes/origin/master
 
 }
