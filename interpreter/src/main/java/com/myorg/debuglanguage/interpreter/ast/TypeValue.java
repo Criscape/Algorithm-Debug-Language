@@ -1,7 +1,11 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
-public class TypeValue {
+public class TypeValue implements java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String dataType;
 	private String ioType;
 	private Object value;

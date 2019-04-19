@@ -1,5 +1,6 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -140,6 +141,11 @@ public class SubRutExec implements ASTNode {
 				String filename = "test/arbol-Noo"+NaryTreeNode.getSerialversionuid()+".ntn";
 				NaryTreeNode.print(auxTree);
 				
+				File f = new File(filename);
+				if(f.exists()){
+					f.delete();
+				}
+				
 				try{
 					
 					FileOutputStream file = new FileOutputStream(filename);
@@ -153,6 +159,7 @@ public class SubRutExec implements ASTNode {
 				}catch(IOException ex){
 					
 					System.out.println("Ruta invalida.");
+					System.out.println(ex);
 					
 				}
 				
