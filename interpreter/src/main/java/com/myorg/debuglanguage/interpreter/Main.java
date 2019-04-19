@@ -12,7 +12,7 @@ public class Main {
 		String program = args.length > 1 ? args[1] : "test/test." + EXTENSION;
 
 		System.out.println("Interpreting file " + program);
-
+		
 		debugGrammarLexer lexer = new debugGrammarLexer(new ANTLRFileStream(program));
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		debugGrammarParser parser = new debugGrammarParser(tokens);

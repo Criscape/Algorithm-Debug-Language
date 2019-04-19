@@ -1,5 +1,8 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +153,24 @@ public class SubRutExec implements ASTNode {
 
 			if(auxTree.getFather() == null){
 				
-				NaryTreeNode.print(auxTree);
+				//this.subrutine.getArboles().add(auxTree);
+				
+				String filename = "test/arbol-No"+NaryTreeNode.getSerialversionuid()+".ntn";
+				
+				try{
+					
+					FileOutputStream file = new FileOutputStream(filename);
+					ObjectOutputStream out = new ObjectOutputStream(file);
+					
+					out.writeObject(auxTree);
+					
+					out.close();
+					file.close();
+					
+				}catch(IOException ex){
+					
+					System.out.println("Ruta invalida.");
+				}
 			}
 			
 		}else{

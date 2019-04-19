@@ -6,9 +6,13 @@ import java.util.Map;
 import javax.swing.JPanel;
 import com.myorg.debuglanguage.interpreter.*;
 
-public class NaryTreeNode {
+public class NaryTreeNode implements java.io.Serializable {
 	
-    private final String LABEL;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final String LABEL;
     private final ArrayList<NaryTreeNode> children;
     private NaryTreeNode father;
     private boolean appendable;
@@ -107,4 +111,10 @@ public class NaryTreeNode {
     public String getLabel(){
     	return this.LABEL;
     }
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+    
+    
 }
