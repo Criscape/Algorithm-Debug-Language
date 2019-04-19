@@ -1,21 +1,3 @@
-#
-main(){
-	
-	int numero;
-	print("");
-	list lista;
-	lista<-{2,4};
-	lista.add(3);
-	lista.add(12);
-	
-	for (i<-0 to lista.size("")-1){
-	
-		print(lista.get(i));
-	}
-
-}
-#
-
 int function fb(in int numer){int rt;}
 {
 	if(numer=0){
@@ -35,5 +17,6 @@ int function fb(in int numer){int rt;}
 
 main(){
 
-	print(fb(8));
+	print(fb(4));
+
 }
