@@ -123,7 +123,8 @@ public class NaryTreeNode implements java.io.Serializable {
     	
     	if(this.symbolTable != null){
     		for(String variable : symbolTable.keySet()){
-        		retur +="nombre: "+variable+" , valor: "+symbolTable.get(variable)+" , tipo: int";
+        		retur +="nombre: "+variable+" , valor: "+((TypeValue) symbolTable.get(variable)).getValue()+" , tipo: "+
+        				((TypeValue) symbolTable.get(variable)).getValue();
         		retur += "\n";
         	}
     	}
