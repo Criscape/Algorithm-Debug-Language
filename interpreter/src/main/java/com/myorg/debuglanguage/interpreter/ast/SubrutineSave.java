@@ -1,5 +1,6 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubrutineSave {
@@ -10,8 +11,8 @@ public class SubrutineSave {
 	private List<ASTNode> parameters;
 	private List<ASTNode> declarations;
 	private List<ASTNode> body;
-	private NaryTreeNode arbol;
 	private NaryTreeNode last;
+	private List<NaryTreeNode> arboles;
 	
 	public SubrutineSave(String funcOrProc,String name, List<ASTNode> parameters, List<ASTNode> declarations, List<ASTNode> body) {
 		super();
@@ -20,7 +21,7 @@ public class SubrutineSave {
 		this.parameters = parameters;
 		this.declarations = declarations;
 		this.body = body;
-		this.arbol = null;
+		this.arboles = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -43,14 +44,14 @@ public class SubrutineSave {
 		return funcOrProc;
 	}
 	
-	public NaryTreeNode getTree(){
-		return this.arbol;
+	public List<NaryTreeNode> getArboles() {
+		return arboles;
 	}
-	
-	public void setTree(NaryTreeNode arbol){
-		this.arbol = arbol;
+
+	public void setArboles(List<NaryTreeNode> arboles) {
+		this.arboles = arboles;
 	}
-	
+
 	public NaryTreeNode getLast(){
 		return this.last;
 	}
