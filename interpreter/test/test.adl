@@ -1,17 +1,19 @@
-
-main(){
-	
-	int numero;
-	print("");
-	print("");
-	print(fibo(5)+"efectivamente es aqui");
-	list lista;
-	lista<-{2,4};
-	lista.add(3);
-	
-	for (i<-0 to lista.size("")-1){
-	
-		print(lista.get(i));
+int function fina(in int numero){int rt;}{
+	if(numero=0){
+		rt<-0;
+	}
+	if(numero=1){
+		rt<-1;
+	}
+	if(numero<>0 and numero<>1){
+		fina(numero-1);
+		fina(numero-2);
+		rt<-2;
 	}
 
+	return 0;
+}
+
+main(){
+	fina(5);
 }
