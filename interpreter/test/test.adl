@@ -1,3 +1,46 @@
+<<<<<<< HEAD
+int function fb(in int numer){int rt;}
+{
+	if(numer=0){
+		rt<-0;
+	}else{
+	
+		if(numer=1){
+			rt<-1;
+		}
+		else{
+			rt<-fb(numer-1)+fb(numer-2);
+		}
+	}
+	
+	return rt;
+=======
+#
+main(){
+	
+	int numero;
+	print("");
+	list lista;
+	lista<-{2,4};
+	lista.add(3);
+	lista.add(12);
+	
+	for (i<-0 to lista.size("")-1){
+	
+		print(lista.get(i));
+	}
+
+	return 0;
+>>>>>>> refs/remotes/origin/master
+}
+<<<<<<< HEAD
+
+main(){
+
+	print(fb(4));
+=======
+#
+
 int function fb(in int numer){int rt;}
 {
 	if(numer=0){
@@ -17,6 +60,7 @@ int function fb(in int numer){int rt;}
 
 main(){
 
-	print(fb(4));
+	print(fb(8));
+>>>>>>> refs/remotes/origin/master
 
 }
