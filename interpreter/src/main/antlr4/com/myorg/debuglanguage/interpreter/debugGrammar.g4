@@ -5,6 +5,10 @@ grammar debugGrammar;
 	import java.util.HashMap;
 	import java.util.List;
 	import java.util.ArrayList;
+	import java.io.File;
+	import java.io.FileOutputStream;
+	import java.io.IOException;
+	import java.io.ObjectOutputStream;
 	import com.myorg.debuglanguage.interpreter.ast.*;
 }
 
@@ -18,12 +22,44 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	Map<String,Object> symbolTable = new HashMap();
 	Map<String,Object> localSymbolTable = new HashMap();
 	
+	List<ASTNode> debuggerList = new ArrayList<>();
+	ListaEjecucion lista_exec = new ListaEjecucion(debuggerList);
+	symbolTable.put("lista_exec",lista_exec);
+	
 	for (ASTNode n : subrt){
 		
 		n.execute(symbolTable,localSymbolTable);
+		((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 	}
 	
 	$main.node.execute(symbolTable,localSymbolTable);
+	((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add($main.node);
+	
+	
+	String filename = "test/lista_ejecucion.ntn";
+	
+	File f = new File(filename);
+	
+	if(f.exists()){
+		f.delete();
+	}
+	
+	try{
+		
+		FileOutputStream file = new FileOutputStream(filename);
+							
+		ObjectOutputStream out = new ObjectOutputStream(file);
+		out.writeObject(((ListaEjecucion)symbolTable.get("lista_exec")));
+		
+		out.close();
+		file.close();
+		
+	}catch(IOException ex){
+		
+		System.out.println("Ruta invalida.");
+		System.out.println(ex);
+		
+	}
 };
 
 main returns [ASTNode node]: MAIN LPAREN RPAREN instruction

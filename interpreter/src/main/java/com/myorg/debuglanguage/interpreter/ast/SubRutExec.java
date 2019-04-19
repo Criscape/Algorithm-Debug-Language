@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SubRutExec implements ASTNode {
+public class SubRutExec implements ASTNode,java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private List<ASTNode> args;
 	private SubrutineSave subrutine;
@@ -43,7 +47,7 @@ public class SubRutExec implements ASTNode {
 					newLocal.put(parameter.getId(), x);
 				}
 			}
-			
+
 			NaryTreeNode auxTree = this.subrutine.getLast();
 
 			if(auxTree == null){

@@ -4,8 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainExec implements ASTNode {
+public class MainExec implements ASTNode,java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<ASTNode> body;
 	
 	public MainExec(List<ASTNode> body) {

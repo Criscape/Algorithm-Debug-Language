@@ -3,8 +3,12 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.List;
 import java.util.Map;
 
-public class Subrutine implements ASTNode {
+public class Subrutine implements ASTNode,java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String dataType;
 	private String funcOrProc;
 	private String name;

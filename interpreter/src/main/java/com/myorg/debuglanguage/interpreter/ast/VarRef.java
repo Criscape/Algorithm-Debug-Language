@@ -2,8 +2,12 @@ package com.myorg.debuglanguage.interpreter.ast;
 
 import java.util.Map;
 
-public class VarRef implements ASTNode {
+public class VarRef implements ASTNode,java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ASTNode name;
 	
 	public VarRef(ASTNode name) {

@@ -3,8 +3,12 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.List;
 import java.util.Map;
 
-public class While implements ASTNode {
+public class While implements ASTNode,java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ASTNode condition;
 	private List<ASTNode> body;
 	

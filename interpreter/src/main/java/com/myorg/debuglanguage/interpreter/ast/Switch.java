@@ -3,8 +3,12 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.List;
 import java.util.Map;
 
-public class Switch implements ASTNode {
+public class Switch implements ASTNode,java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ASTNode id;
 	private List<Case> cases;
 	private List<ASTNode> defaultCase;

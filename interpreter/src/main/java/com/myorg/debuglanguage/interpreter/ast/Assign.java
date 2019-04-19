@@ -2,8 +2,12 @@ package com.myorg.debuglanguage.interpreter.ast;
 
 import java.util.Map;
 
-public class Assign implements ASTNode {
+public class Assign implements ASTNode,java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ASTNode id;
 	private ASTNode value;
 	

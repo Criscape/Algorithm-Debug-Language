@@ -3,8 +3,12 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubrutineSave {
+public class SubrutineSave implements java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	//private String dataType;
 	private String funcOrProc;
 	private String name;
