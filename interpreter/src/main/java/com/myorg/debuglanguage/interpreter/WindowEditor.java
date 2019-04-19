@@ -172,10 +172,10 @@ public class WindowEditor extends JFrame {
 				CommonTokenStream tokens = new CommonTokenStream(lexer);
 				debugGrammarParser parser = new debugGrammarParser(tokens);
 
-				debugGrammarParser.ProgramContext tree = parser.program();
+				debugGrammarParser.ProgramContext tree2 = parser.program();
 				
 				debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
-				visitor.visit(tree);
+				visitor.visit(tree2);
 				
 				long end = System.currentTimeMillis();
 				float sec = (end - start) / 1000F;
@@ -183,8 +183,12 @@ public class WindowEditor extends JFrame {
 				System.out.println((char)27 + "[33mYELLOW");
 				
 				
-				//loads tree
-				//loadTree();
+				loadTree();
+				NaryTreeNode.print(tree);
+				//System.out.println(tree.getChildrenSize());
+				//System.out.println(this.tree.getLabel());
+				repintarArbol();
+				
 				
 				
 				
@@ -247,9 +251,7 @@ public class WindowEditor extends JFrame {
 		this.tree.getChild(0).getChild(1).addChild("l", this.tree.getChild(0).getChild(1), null);
 		*/
 		
-		loadTree();
-		System.out.println(this.tree.getLabel());
-		repintarArbol();
+		
 		
 	
 	}
