@@ -8,7 +8,11 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
+
+import com.myorg.debuglanguage.interpreter.ast.NaryTreeNode;
+
 import javax.swing.JInternalFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -17,6 +21,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JToolBar;
@@ -32,6 +37,8 @@ import javax.swing.UIManager;
 public class WindowEditor extends JFrame {
 
 	private JPanel contentPane;
+	private JInternalFrame internalFrame_1;
+	private NaryTreeNode tree;
 
 	/**
 	 * Launch the application.
@@ -56,7 +63,7 @@ public class WindowEditor extends JFrame {
 	 */
 	public WindowEditor() throws BadLocationException, PropertyVetoException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 835, 752);
+		setBounds(100, 100, 1412, 752);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -113,6 +120,12 @@ public class WindowEditor extends JFrame {
 		});
 		menuBar.add(btnNewButton_1);
 		
+		JInternalFrame internalFrame_1 = new JInternalFrame("New JInternalFrame");
+		internalFrame_1.setEnabled(false);
+		internalFrame_1.setBounds(709, 354, 651, 348);
+		contentPane.add(internalFrame_1);
+		internalFrame_1.setVisible(true);
+		
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -126,5 +139,23 @@ public class WindowEditor extends JFrame {
 		});
 		internalFrame.setVisible(true);
 		
+		this.tree = new NaryTreeNode(5,null);
+		
+		
+	
 	}
+	
+	public void repintarArbol() {
+        this.internalFrame_1.removeAll();
+        Rectangle tamaño = this.internalFrame_1.getBounds();
+        this.internalFrame_1 = null;
+        this.internalFrame_1 = new JInternalFrame("Representación gráfica", true);
+        this.internalFrame_1.add(this.internalFrame_1, JLayeredPane.DEFAULT_LAYER);
+        this.internalFrame_1.setVisible(true);
+        this.internalFrame_1.setBounds(tamaño);
+        this.internalFrame_1.setEnabled(false);
+        this.internalFrame_1.add(this.tree.getdibujo(), BorderLayout.CENTER);
+    }
+	
+
 }
