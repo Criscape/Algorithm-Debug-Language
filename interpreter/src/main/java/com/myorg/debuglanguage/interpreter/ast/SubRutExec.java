@@ -204,7 +204,23 @@ public class SubRutExec implements ASTNode {
 				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
 				
 				dato = list_generated.getList().get(get_x);
+			}else if(this.name.matches("\\w+\\."+"size")){
+				
+				String nombre = this.name.substring(0,this.name.indexOf("."));
+				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
+
+				dato = list_generated.getList().size();
+			}else if(this.name.matches("\\w+\\."+"size")){
+				
+				Object object_x = args.get(0).execute(symbolTable, localSymbolTable);
+				
+				String nombre = this.name.substring(0,this.name.indexOf("."));
+				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
+				
+				list_generated.getList().add(object_x);
 			}
+			
+			
 		}
 		
 		return dato;
