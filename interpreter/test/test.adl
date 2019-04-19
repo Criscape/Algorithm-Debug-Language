@@ -1,42 +1,3 @@
-<<<<<<< HEAD
-int function fina(in int numero){int rt;}{
-	if(numero=0){
-		rt<-0;
-	}
-	if(numero=1){
-		rt<-1;
-	}
-	if(numero<>0 and numero<>1){
-		fina(numero-1);
-		fina(numero-2);
-		rt<-2;
-	}
-=======
-#
-main(){
-	
-	int numero;
-	print("");
-	list lista;
-	lista<-{2,4};
-	lista.add(3);
-	lista.add(12);
-	
-	for (i<-0 to lista.size("")-1){
-	
-		print(lista.get(i));
-	}
->>>>>>> branch 'master' of https://github.com/Criscape/Algorithm-Debug-Language.git
-
-	return 0;
-}
-<<<<<<< HEAD
-
-main(){
-	fina(5);
-=======
-#
-
 int function fb(in int numer){int rt;}
 {
 	if(numer=0){
@@ -56,6 +17,6 @@ int function fb(in int numer){int rt;}
 
 main(){
 
-	print(fb(8));
->>>>>>> branch 'master' of https://github.com/Criscape/Algorithm-Debug-Language.git
+	print(fb(4));
+
 }
