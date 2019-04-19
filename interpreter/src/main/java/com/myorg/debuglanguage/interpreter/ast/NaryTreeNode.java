@@ -130,5 +130,11 @@ public class NaryTreeNode implements java.io.Serializable {
     	
     	return retur;
     }
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+    
+    
 }
 

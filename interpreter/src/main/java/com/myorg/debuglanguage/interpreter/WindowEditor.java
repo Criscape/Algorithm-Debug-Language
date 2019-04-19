@@ -95,7 +95,7 @@ public class WindowEditor extends JFrame {
 	    };
 	    
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
-	    System.setOut(print);
+	    //System.setOut(print);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1412, 752);
@@ -184,7 +184,9 @@ public class WindowEditor extends JFrame {
 				
 				
 				//loads tree
-				loadTree();
+				//loadTree();
+				
+				
 				
 			}
 		});
@@ -226,7 +228,7 @@ public class WindowEditor extends JFrame {
 		});
 		internalFrame.setVisible(true);
 		
-		
+		/*
 		Map<String,Object> table = new HashMap();
 		table.put("ejemplo1", 3);
 		
@@ -239,12 +241,16 @@ public class WindowEditor extends JFrame {
 		
 		this.tree.getChild(1).addChild("a", this.tree.getChild(1), null);
 		this.tree.getChild(1).addChild("b", this.tree.getChild(1), null);
-		
+		/*
 		this.tree.getChild(0).getChild(0).addChild("w", this.tree.getChild(0).getChild(0), null);
 		this.tree.getChild(0).getChild(1).addChild("k", this.tree.getChild(0).getChild(1), null);
 		this.tree.getChild(0).getChild(1).addChild("l", this.tree.getChild(0).getChild(1), null);
+		*/
 		
+		loadTree();
+		System.out.println(this.tree.getLabel());
 		repintarArbol();
+		
 	
 	}
 	
@@ -284,7 +290,7 @@ public class WindowEditor extends JFrame {
         this.internalFrame_1.setBounds(tamaño);
         this.internalFrame_1.setEnabled(false);
         this.internalFrame_1.setBorder(null);
-        this.internalFrame_1.getContentPane().add(this.tree.getdibujo(), BorderLayout.CENTER);
+        this.internalFrame_1.add(this.tree.getdibujo(), BorderLayout.CENTER);
         ((javax.swing.plaf.basic.BasicInternalFrameUI)internalFrame_1.getUI()).setNorthPane(null);
         this.internalFrame_1.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2), new EmptyBorder(0, 0, 0, 0)));
         
@@ -326,12 +332,23 @@ public class WindowEditor extends JFrame {
 			e.printStackTrace();
 		} 
 		
+		ObjectInputStream in = null;
 		try {
-			ObjectInputStream in = new ObjectInputStream(file);
+			in = new ObjectInputStream(file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		
+		try {
+			this.tree = (NaryTreeNode)in.readObject();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	class JTextFieldPrintStream extends PrintStream {
