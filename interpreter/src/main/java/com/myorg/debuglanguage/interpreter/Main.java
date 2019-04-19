@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 public class Main {
 
 	private static final String EXTENSION = "adl";
-
+	
 	public static void main(String[] args) throws IOException {
 		String program = args.length > 1 ? args[1] : "test/test." + EXTENSION;
 

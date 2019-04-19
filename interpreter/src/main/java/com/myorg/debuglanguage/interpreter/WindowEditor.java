@@ -9,6 +9,9 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
 import com.myorg.debuglanguage.interpreter.ast.NaryTreeNode;
 
 import javax.swing.JInternalFrame;
@@ -17,6 +20,17 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.event.ActionEvent;
@@ -46,6 +60,8 @@ public class WindowEditor extends JFrame {
 	private JInternalFrame internalFrame_1;
 	private NaryTreeNode tree;
 	private JTextPane textArea2;
+	private JInternalFrame internalFrame;
+	private JTextArea textArea;
 	 
 
 	/**
@@ -70,6 +86,17 @@ public class WindowEditor extends JFrame {
 	 * @throws PropertyVetoException 
 	 */
 	public WindowEditor() throws BadLocationException, PropertyVetoException {
+		
+		
+		OutputStream out = new OutputStream() {
+	        @Override
+	        public void write(int b) throws IOException {
+	        }
+	    };
+	    
+	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
+	    System.setOut(print);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1412, 752);
 		contentPane = new JPanel();
@@ -81,14 +108,14 @@ public class WindowEditor extends JFrame {
 		Border border = BorderFactory.createLineBorder(Color.BLACK);
 	    
 		
-		JInternalFrame internalFrame = new editor();
-		internalFrame.setBounds(10, 41, 687, 477);
-		internalFrame.setBackground(Color.WHITE);
-		internalFrame.setEnabled(true);
+		this.internalFrame = new editor();
+		this.internalFrame.setBounds(10, 41, 687, 477);
+		this.internalFrame.setBackground(Color.WHITE);
+		this.internalFrame.setEnabled(true);
 		((javax.swing.plaf.basic.BasicInternalFrameUI)internalFrame.getUI()).setNorthPane(null);
 		contentPane.setLayout(null);
 		contentPane.add(internalFrame);
-		internalFrame.setBorder(new CompoundBorder());
+		this.internalFrame.setBorder(new CompoundBorder());
 	    
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -109,13 +136,13 @@ public class WindowEditor extends JFrame {
 		contentPane.add(scrollPane);
 		
 		
-		JTextArea textArea = new JTextArea("Console:>> \n");
+		this.textArea = new JTextArea("Console:>> \n");
 		
 		scrollPane.setViewportView(textArea);
-		textArea.setForeground(new Color(0, 0, 0));
-		textArea.setBackground(SystemColor.text);
-		textArea.setFont(new Font("Calibri", Font.PLAIN, 18));
-		textArea.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2), new EmptyBorder(20, 20, 20, 20)));
+		this.textArea.setForeground(new Color(0, 0, 0));
+		this.textArea.setBackground(SystemColor.text);
+		this.textArea.setFont(new Font("Calibri", Font.PLAIN, 18));
+		this.textArea.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2), new EmptyBorder(20, 20, 20, 20)));
 		
 		UIManager.put("ScrollBar.thumb", new ColorUIResource(Color.black));
 		
@@ -123,9 +150,43 @@ public class WindowEditor extends JFrame {
 		JButton btnNewButton_1 = new JButton("Ejecutar");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println(((editor) internalFrame).getTextArea().getText());
-				//textArea.setText(textArea.getText()+((editor) internalFrame).getTextArea().getText()+"\n");
-							}
+				
+				long start = System.currentTimeMillis();
+				
+				textArea.setText("Console:>> \n");
+				String code = ((editor) internalFrame).getTextArea().getText();
+				
+				saveFile(code);
+				
+				String program = "test/test.adl";
+
+				
+				
+				debugGrammarLexer lexer = null;
+				try {
+					lexer = new debugGrammarLexer(new ANTLRFileStream(program));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				CommonTokenStream tokens = new CommonTokenStream(lexer);
+				debugGrammarParser parser = new debugGrammarParser(tokens);
+
+				debugGrammarParser.ProgramContext tree = parser.program();
+				
+				debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
+				visitor.visit(tree);
+				
+				long end = System.currentTimeMillis();
+				float sec = (end - start) / 1000F;
+				System.out.println("Tiempo total: "+sec+" segundos");
+				System.out.println((char)27 + "[33mYELLOW");
+				
+				
+				//loads tree
+				loadTree();
+				
+			}
 		});
 		menuBar.add(btnNewButton_1);
 		
@@ -187,6 +248,32 @@ public class WindowEditor extends JFrame {
 	
 	}
 	
+	public void saveFile(String code){
+	
+		File f;
+		f = new File("test/test.adl");
+		FileWriter w = null;
+		try {
+			w = new FileWriter(f);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		BufferedWriter bw = new BufferedWriter(w);
+		PrintWriter wr = new PrintWriter(bw);  
+		wr.write(code);
+		
+		wr.close();
+		try {
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	
+	}
+	
 	public void repintarArbol() {
         //this.internalFrame_1.removeAll();
         Rectangle tamaño = this.internalFrame_1.getBounds();
@@ -228,4 +315,32 @@ public class WindowEditor extends JFrame {
 			}
 		});
     }
+	
+	public void loadTree(){
+		
+		FileInputStream file = null;
+		try {
+			file = new FileInputStream("test/arbol-No1.ntn");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		try {
+			ObjectInputStream in = new ObjectInputStream(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	
+	class JTextFieldPrintStream extends PrintStream {
+        public JTextFieldPrintStream(OutputStream out) {
+            super(out);
+        }
+        @Override
+        public void println(String x) {
+        	textArea.setText(textArea.getText()+"\n"+x);
+        }
+    };
 }
