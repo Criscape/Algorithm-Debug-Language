@@ -1,6 +1,7 @@
 package com.myorg.debuglanguage.interpreter;
 
 import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -13,6 +14,10 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import com.myorg.debuglanguage.interpreter.ast.NaryTreeNode;
+import com.myorg.debuglanguage.interpreter.ast.TypeValue;
+import com.myorg.debuglanguage.interpreter.ast.ASTNode;
+import com.myorg.debuglanguage.interpreter.ast.ListaEjecucion;
+
 
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
@@ -38,6 +43,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import java.awt.Font;
+import java.awt.List;
 import java.awt.Rectangle;
 import java.awt.Color;
 import java.awt.SystemColor;
@@ -61,7 +67,11 @@ public class WindowEditor extends JFrame {
 	private NaryTreeNode tree;
 	private JTextPane textArea2;
 	private JInternalFrame internalFrame;
-	private JTextArea textArea;
+	private JTextPane textArea;
+	private ListaEjecucion list;
+	private int step;
+	Map<String, Object> symbolTable;
+	Map<String, Object> localSymbolTable;
 	 
 
 	/**
@@ -94,8 +104,15 @@ public class WindowEditor extends JFrame {
 	        }
 	    };
 	    
+	    
+	    
+	    
+	    //Initialize global variable step in 0 for exectution
+	    this.step = 0;
+	    
+	    
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
-	    //System.setOut(print);
+	    System.setOut(print);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1412, 752);
@@ -136,7 +153,7 @@ public class WindowEditor extends JFrame {
 		contentPane.add(scrollPane);
 		
 		
-		this.textArea = new JTextArea("Console:>> \n");
+		this.textArea = new JTextPane();
 		
 		scrollPane.setViewportView(textArea);
 		this.textArea.setForeground(new Color(0, 0, 0));
@@ -145,7 +162,6 @@ public class WindowEditor extends JFrame {
 		this.textArea.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2), new EmptyBorder(20, 20, 20, 20)));
 		
 		UIManager.put("ScrollBar.thumb", new ColorUIResource(Color.black));
-		
 		
 		JButton btnNewButton_1 = new JButton("Ejecutar");
 		btnNewButton_1.addActionListener(new ActionListener() {
@@ -180,14 +196,27 @@ public class WindowEditor extends JFrame {
 				long end = System.currentTimeMillis();
 				float sec = (end - start) / 1000F;
 				System.out.println("Tiempo total: "+sec+" segundos");
-				System.out.println((char)27 + "[33mYELLOW");
+				//System.out.println((char)27 + "[33mYELLOW");
 				
 				
 				loadTree();
-				NaryTreeNode.print(tree);
+				//NaryTreeNode.print(tree);
 				//System.out.println(tree.getChildrenSize());
 				//System.out.println(this.tree.getLabel());
 				repintarArbol();
+				
+				loadList();
+				
+				step = 0;
+
+				symbolTable = new HashMap<>();
+				localSymbolTable = new HashMap<>();
+				
+				for(ASTNode node : list.getOrden()){
+					node.execute(symbolTable, localSymbolTable);
+					writeInConsole();
+					step = step + 1;
+				}
 				
 				
 				
@@ -195,6 +224,118 @@ public class WindowEditor extends JFrame {
 			}
 		});
 		menuBar.add(btnNewButton_1);
+		
+		
+		
+		//Botón Sigueinte
+		JButton btnSiguiente = new JButton("Siguiente ->");
+		btnSiguiente.setVisible(false);
+		btnSiguiente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Estás en el paso "+step);
+				if(step < list.getOrden().size()){
+					moveForward();
+					writeInConsole();
+					step = step + 1;
+				}
+			}
+		});
+		menuBar.add(btnSiguiente);
+		
+		//Botón atrás
+		JButton btnAtras = new JButton("<- Anterior");
+		btnAtras.setVisible(false);
+		btnAtras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Estás en el paso "+step);
+				
+				if(step > 0){
+					moveBackwards();
+					
+					step = step - 1;
+				}
+			}
+		});
+		menuBar.add(btnAtras);
+		
+		
+		
+		
+		JButton btnNewButton_2 = new JButton("Ejecutar paso a paso");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				long start = System.currentTimeMillis();
+				
+				textArea.setText("Console:>> \n");
+				String code = ((editor) internalFrame).getTextArea().getText();
+				
+				saveFile(code);
+				
+				String program = "test/test.adl";
+
+				
+				
+				debugGrammarLexer lexer = null;
+				try {
+					lexer = new debugGrammarLexer(new ANTLRFileStream(program));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				CommonTokenStream tokens = new CommonTokenStream(lexer);
+				debugGrammarParser parser = new debugGrammarParser(tokens);
+
+				debugGrammarParser.ProgramContext tree2 = parser.program();
+				
+				debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
+				visitor.visit(tree2);
+				
+				long end = System.currentTimeMillis();
+				float sec = (end - start) / 1000F;
+				System.out.println("Tiempo total: "+sec+" segundos");
+				//System.out.println((char)27 + "[33mYELLOW");
+				
+				
+				loadTree();
+				//NaryTreeNode.print(tree);
+				//System.out.println(tree.getChildrenSize());
+				//System.out.println(this.tree.getLabel());
+				repintarArbol();
+				loadList();
+
+				
+				
+				step = 0;
+				symbolTable = new HashMap<>();
+				localSymbolTable = new HashMap<>();
+				//System.out.println(list.getOrden().size());
+				//list.getOrden().get(0).execute(symbolTable, localSymbolTable);
+				//list.getOrden().get(3).execute(symbolTable, localSymbolTable);
+				
+				/*
+				for(ASTNode node : list.getOrden()){
+					node.execute(symbolTable, localSymbolTable);
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				*/
+				btnSiguiente.setVisible(true);
+				btnAtras.setVisible(true);
+			}
+		});
+		menuBar.add(btnNewButton_2);
+		
+		
+		
+		
+		
+		
+	
 		
 		internalFrame_1 = new JInternalFrame();
 		internalFrame_1.setEnabled(false);
@@ -208,13 +349,14 @@ public class WindowEditor extends JFrame {
 		contentPane.add(internalFrame_1);
 		internalFrame_1.setVisible(true);
 		*/
+		 
+		 JScrollPane scrollPane_1 = new JScrollPane();
+		 scrollPane_1.setBounds(709, 41, 651, 316);
+		 contentPane.add(scrollPane_1);
 		 this.textArea2 = new JTextPane();
+		 scrollPane_1.setViewportView(textArea2);
 		 
 		 textArea2.setFont(new Font("Arial", Font.PLAIN, 18));textArea2.setFont(new Font("Arial", Font.PLAIN, 18));
-		 
-		 
-	     this.textArea2.setBounds(709, 41, 651, 316);
-	     contentPane.add(this.textArea2);
 	     
 	     this.textArea2.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2), new EmptyBorder(0, 0, 0, 0)));
 	        
@@ -292,7 +434,7 @@ public class WindowEditor extends JFrame {
         this.internalFrame_1.setBounds(tamaño);
         this.internalFrame_1.setEnabled(false);
         this.internalFrame_1.setBorder(null);
-        this.internalFrame_1.add(this.tree.getdibujo(), BorderLayout.CENTER);
+        this.internalFrame_1.getContentPane().add(this.tree.getdibujo(), BorderLayout.CENTER);
         ((javax.swing.plaf.basic.BasicInternalFrameUI)internalFrame_1.getUI()).setNorthPane(null);
         this.internalFrame_1.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0), 2), new EmptyBorder(0, 0, 0, 0)));
         
@@ -324,11 +466,39 @@ public class WindowEditor extends JFrame {
 		});
     }
 	
+	public void loadList(){
+		FileInputStream file = null;
+		try {
+			file = new FileInputStream("test/lista_ejecucion.ntn");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		ObjectInputStream in = null;
+		try {
+			in = new ObjectInputStream(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		try {
+			this.list = (ListaEjecucion)in.readObject();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void loadTree(){
 		
 		FileInputStream file = null;
 		try {
-			file = new FileInputStream("test/arbol-No1.ntn");
+			file = new FileInputStream("test/arbol-Noo1.ntn");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -353,6 +523,47 @@ public class WindowEditor extends JFrame {
 		}
 	}
 	
+	public void moveForward(){
+		
+		list.getOrden().get(step).execute(symbolTable, localSymbolTable);
+	
+	}
+	
+	public void moveBackwards(){
+		
+		for(int i=0;i<step;i++){
+			list.getOrden().get(i).execute(symbolTable, localSymbolTable);
+			writeInConsole();
+		}
+	}
+	
+	public String getLocalTableData(){
+		String retur = "";
+    	
+		
+    	if(this.localSymbolTable != null){
+    		retur +="----------------------------------------------"+"\n";
+			retur +="PASO: "+step+"\n";
+    		for(String variable : localSymbolTable.keySet()){
+    			
+        		retur +="nombre: "+variable+" , valor: "+((TypeValue) localSymbolTable.get(variable)).getValue()+" , tipo: "+
+        				((TypeValue) localSymbolTable.get(variable)).getDataType()+"\n";
+        	}
+    		retur += "----------------------------------------------";
+    		retur += "\n";
+    	}
+    	
+    	return retur;
+	}
+	
+	public void writeInConsole(){
+		if(step==0){
+			this.textArea2.setText("");
+			this.textArea2.setText("Estado de variables paso a paso");
+		}
+		this.textArea2.setText(this.textArea2.getText()+"\n"+getLocalTableData());
+	}
+	
 	class JTextFieldPrintStream extends PrintStream {
         public JTextFieldPrintStream(OutputStream out) {
             super(out);
@@ -361,5 +572,5 @@ public class WindowEditor extends JFrame {
         public void println(String x) {
         	textArea.setText(textArea.getText()+"\n"+x);
         }
-    };
+    }
 }
