@@ -204,16 +204,18 @@ public class ArbolExpresionGrafico extends JPanel
      if (n == null) 
          return;
      
-     g.setColor(Color.BLACK);
+     g.setColor(new Color(16,172,132));
      g.setStroke(new BasicStroke(2));
      Rectangle r = (Rectangle) posicionNodos.get(n);
      //g.draw(r);
      g.drawOval(r.x, r.y, r.width, r.height);
      g.setFont(new Font("Monospaced", Font.BOLD, 16));
+     
+     g.setColor(Color.BLACK);
      g.drawString(n.getLabel()+"", r.x + 12, r.y + yoffs + 7);
    
      if (puntox != Integer.MAX_VALUE)
-       
+     g.setColor(new Color(230,103,103));
      g.drawLine(puntox, puntoy, (int)(r.x + r.width/2), r.y);
      
      if(n.getChildrenSize() == 3){
