@@ -82,17 +82,15 @@ procedure returns [ASTNode node]: PROCEDURE ID features
 		$features.node.get(0), $features.node.get(1), $features.node.get(2));
 };
 
-features returns [List<List<ASTNode>> node]: LPAREN parameters? RPAREN
+features returns [List<List<ASTNode>> node]: {List<ASTNode> parm = new ArrayList<>();}
+LPAREN (parameters {parm = $parameters.node;})? RPAREN
 { List<ASTNode> declare = new ArrayList<>(); }
 	LCURLY ( declaration {declare.add($declaration.node);} )* RCURLY
 	instruction
 	{	
-		List<ASTNode> parm = new ArrayList<>();
+		
 		List<ASTNode> instruc = new ArrayList<>();
 		
-		if ($parameters.node != null){
-			parm = $parameters.node;
-		}
 		
 		instruc = $instruction.node;
 		
@@ -191,8 +189,10 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | switchG {$node = $switchG.node;}
 | repeat {$node = $repeat.node;};
 
-subrutinecall returns [ASTNode node]: t1=ID LPAREN ss1=arguments? RPAREN {$node = new SubRutExec($t1.text,$ss1.node);}
+subrutinecall returns [ASTNode node]: t1=ID LPAREN subrutinecall_x RPAREN {$node = new SubRutExec($t1.text,$subrutinecall_x.node);}
 | t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);};
+
+subrutinecall_x returns [List<ASTNode> node]: arguments {$node = $arguments.node;}| {$node = new ArrayList<>();};
 
 returnG returns [ASTNode node]: RETURN operation {$node = new Retorno($operation.node);};
 			

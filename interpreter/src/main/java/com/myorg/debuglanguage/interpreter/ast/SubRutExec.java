@@ -28,27 +28,48 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
-		Object dato = null;
+		Object dato = null; // Variable para el return de la función
 		
 		if(symbolTable.containsKey(this.name)){
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Inicialización del Map
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
 			
 			this.subrutine = (SubrutineSave)symbolTable.get(this.name);
 			
 			Map<String,Object> newLocal = new HashMap<>();
 			
-			for (int i = 0; i < this.subrutine.getParameters().size(); i++){
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Inicialización de parametros
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
+			
+			if(this.subrutine.getParameters() != null){
 				
-				Parameter parameter = (Parameter)this.subrutine.getParameters().get(i);
-
-				TypeValue x = new TypeValue(parameter.getDataType(),parameter.getIoType(),
-						this.args.get(i).execute(symbolTable, localSymbolTable));
-				
-				if(parameter.getIoType().equals("in")){
+				for (int i = 0; i < this.subrutine.getParameters().size(); i++){
 					
-					newLocal.put(parameter.getId(), x);
-				}
-			}
+					Parameter parameter = (Parameter)this.subrutine.getParameters().get(i);
 
+					TypeValue x = new TypeValue(parameter.getDataType(),parameter.getIoType(),
+							this.args.get(i).execute(symbolTable, localSymbolTable));
+					
+					if(parameter.getIoType().equals("in")){
+						
+						newLocal.put(parameter.getId(), x);
+					}
+				}
+
+			}
+			
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Creación del arbol de recursión
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
+			
 			NaryTreeNode auxTree = this.subrutine.getLast();
 
 			if(auxTree == null){
@@ -66,42 +87,29 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 					this.subrutine.setLast(auxTree.getLastChild());
 					
 				}else{
-						
-						/*while(auxTree.getFather() != null  && auxTree.getFather().getAppendable() == false){
-							
-							auxTree = auxTree.getFather();
-						}*/
-						auxTree = auxTree.getFather();
-						auxTree.addChild(Integer.toString(this.subrutine.getCounter()), auxTree, newLocal);
-						this.subrutine.setCounter(this.subrutine.getCounter()+1);
-						this.subrutine.setLast(auxTree.getLastChild());
-						
-						
-						/*if(auxTree.getFather() == null && auxTree.getAppendable() == true){
-							
-							auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree);
-							System.out.println("-dsdsd");
-							this.subrutine.setLast(auxTree.getLastChild());
-							
-						}else if(auxTree.getFather() == null && auxTree.getAppendable() == false){
-							
-							System.out.println("Aqui no entra");
-							
-						}else{
-							
-							auxTree = auxTree.getFather();
-							auxTree.addChild(((TypeValue)newLocal.get("numero")).getValue().toString(), auxTree);
-							//System.out.println("------------------------");
-							//NaryTreeNode.printLast(auxTree);
-							this.subrutine.setLast(auxTree.getLastChild());
 
-						}*/
+					auxTree = auxTree.getFather();
+					auxTree.addChild(Integer.toString(this.subrutine.getCounter()), auxTree, newLocal);
+					this.subrutine.setCounter(this.subrutine.getCounter()+1);
+					this.subrutine.setLast(auxTree.getLastChild());
 					
 				}
 				
 			}
 			
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Creación de la lista de debug
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
+			
 			List<Map<String,Object>> ld = new ArrayList<>();
+			
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Inicialización de variables de la zona de declaración
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
 			
 			for (int i = 0; i < this.subrutine.getDeclarations().size(); i++){
 				
@@ -110,7 +118,13 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				declare.execute(symbolTable, newLocal);
 			}
 			
-			ld.add(newLocal);
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Ejecución de la función
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
+			
+			ld.add(newLocal); //Añadiendo entorno a la lista de debug 
 			
 			if(this.subrutine.getFuncOrProc().equals("function")){
 				
@@ -139,9 +153,15 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				}
 			}
 			
+			
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			//Agregando el arbol de recursión al archivo
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
+			
 			ListaDebug ld_x = new ListaDebug(ld);
-			newLocal.put("lista_debug", ld_x);
-			System.out.println(newLocal);
+			newLocal.put("lista_debug", ld_x); //Añadiendo la lista de debug al Map
+			
 			auxTree = this.subrutine.getLast();
 			auxTree.setSymbolTable(newLocal);
 			auxTree.setAppendable(false);
@@ -152,7 +172,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				
 				//this.subrutine.getArboles().add(auxTree);
 				
-				String filename = "test/arbol-Noo"+NaryTreeNode.getSerialversionuid()+".ntn";
+				String filename = "test/arbol-No"+NaryTreeNode.getSerialversionuid()+".ntn";
 				//NaryTreeNode.print(auxTree);
 				
 				File f = new File(filename);
@@ -187,7 +207,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				case "print":
 					
 					Object x = args.get(0).execute(symbolTable, localSymbolTable);
-					System.out.println(x);
+					
 					if(x instanceof Integer){
 						
 						System.out.println(Integer.parseInt(x.toString()));
