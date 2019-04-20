@@ -117,18 +117,21 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 						
 						dato = x.execute(symbolTable, newLocal);
 						ret = true;
+						//((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
 					}
 					
 					if(!ret){
 						
 						x.execute(symbolTable, newLocal);
+						//((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
 					}
 				}
 			}else{
 				
 				for (ASTNode x: this.subrutine.getBody()){
 					
-					x.execute(symbolTable, newLocal);
+					//x.execute(symbolTable, newLocal);
+					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
 				}
 			}
 
@@ -143,7 +146,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				//this.subrutine.getArboles().add(auxTree);
 				
 				String filename = "test/arbol-Noo"+NaryTreeNode.getSerialversionuid()+".ntn";
-				NaryTreeNode.print(auxTree);
+				//NaryTreeNode.print(auxTree);
 				
 				File f = new File(filename);
 				if(f.exists()){
