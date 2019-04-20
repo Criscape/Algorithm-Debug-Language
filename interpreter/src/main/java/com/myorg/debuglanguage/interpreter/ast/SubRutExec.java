@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,12 +101,16 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				
 			}
 			
+			List<Map<String,Object>> ld = new ArrayList<>();
+			
 			for (int i = 0; i < this.subrutine.getDeclarations().size(); i++){
 				
 				Declaration declare = (Declaration)this.subrutine.getDeclarations().get(i);
 
 				declare.execute(symbolTable, newLocal);
 			}
+			
+			ld.add(newLocal);
 			
 			if(this.subrutine.getFuncOrProc().equals("function")){
 				
@@ -117,24 +122,26 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 						
 						dato = x.execute(symbolTable, newLocal);
 						ret = true;
-						//((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
 					}
 					
 					if(!ret){
 						
 						x.execute(symbolTable, newLocal);
-						//((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
+						ld.add(newLocal);
 					}
 				}
 			}else{
 				
 				for (ASTNode x: this.subrutine.getBody()){
 					
-					//x.execute(symbolTable, newLocal);
-					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
+					x.execute(symbolTable, newLocal);
+					ld.add(newLocal);
 				}
 			}
-
+			
+			ListaDebug ld_x = new ListaDebug(ld);
+			newLocal.put("lista_debug", ld_x);
+			System.out.println(newLocal);
 			auxTree = this.subrutine.getLast();
 			auxTree.setSymbolTable(newLocal);
 			auxTree.setAppendable(false);
@@ -180,7 +187,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				case "print":
 					
 					Object x = args.get(0).execute(symbolTable, localSymbolTable);
-					
+					System.out.println(x);
 					if(x instanceof Integer){
 						
 						System.out.println(Integer.parseInt(x.toString()));
@@ -192,6 +199,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 						
 						System.out.println(x);
 					}
+					
 					break;
 				
 			}
