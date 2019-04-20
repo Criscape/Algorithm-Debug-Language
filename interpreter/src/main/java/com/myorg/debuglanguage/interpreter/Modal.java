@@ -72,7 +72,10 @@ public class Modal extends JFrame {
 		btnAadir = new JButton("Añadir");
 		btnAadir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
 				setVisible(false);
+				time = Integer.parseInt(textField.getText());
+				System.out.println(time);
 			}
 		});
 		btnAadir.setBounds(127, 206, 157, 30);

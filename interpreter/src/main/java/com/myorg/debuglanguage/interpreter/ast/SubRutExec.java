@@ -154,7 +154,6 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				
 				String filename = "test/arbol-Noo"+NaryTreeNode.getSerialversionuid()+".ntn";
 				//NaryTreeNode.print(auxTree);
-				
 				File f = new File(filename);
 				if(f.exists()){
 					f.delete();

@@ -218,21 +218,28 @@ public class WindowEditor extends JFrame {
 
 				symbolTable = new HashMap<>();
 				localSymbolTable = new HashMap<>();
-				
-				
-				for(ASTNode node : list.getOrden()){
-					node.execute(symbolTable, localSymbolTable);
-					writeInConsole();
-					step = step + 1;
 					
-					Timer timer = new Timer(3000, this);
-				    timer.setRepeats(true);
-				    timer.start();
-					
+					System.out.println("working");
+					System.out.println(time*1000);
+					timer = new Timer(time*1000, new ActionListener(){
+						
+						@Override
+						public void actionPerformed(ActionEvent e){
+							
+							if(step<list.getOrden().size()){
+								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
+								writeInConsole();
+								step = step + 1;
+							}
+							else{
+								timer.stop();
+							}
+							
+						}
+					});
+					timer.start();
 				}
 				
-				
-			}
 		});
 		menuBar.add(btnNewButton_1);
 		
