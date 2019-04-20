@@ -55,6 +55,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -72,6 +73,9 @@ public class WindowEditor extends JFrame {
 	private int step;
 	Map<String, Object> symbolTable;
 	Map<String, Object> localSymbolTable;
+	private Modal modal;
+	private int time;
+	private Timer timer;
 	 
 
 	/**
@@ -109,10 +113,12 @@ public class WindowEditor extends JFrame {
 	    
 	    //Initialize global variable step in 0 for exectution
 	    this.step = 0;
-	    
+	    this.time = 0;
+	    this.modal = new Modal();
+	    modal.setVisible(false);
 	    
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
-	    System.setOut(print);
+	    //System.setOut(print);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1412, 752);
@@ -167,6 +173,7 @@ public class WindowEditor extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				
 				long start = System.currentTimeMillis();
 				
 				textArea.setText("Console:>> \n");
@@ -212,13 +219,17 @@ public class WindowEditor extends JFrame {
 				symbolTable = new HashMap<>();
 				localSymbolTable = new HashMap<>();
 				
+				
 				for(ASTNode node : list.getOrden()){
 					node.execute(symbolTable, localSymbolTable);
 					writeInConsole();
 					step = step + 1;
+					
+					Timer timer = new Timer(3000, this);
+				    timer.setRepeats(true);
+				    timer.start();
+					
 				}
-				
-				
 				
 				
 			}
@@ -250,9 +261,12 @@ public class WindowEditor extends JFrame {
 				System.out.println("Estás en el paso "+step);
 				
 				if(step > 0){
+					localSymbolTable = new HashMap<String, Object>();
+					symbolTable = new HashMap<String, Object>();
 					moveBackwards();
-					
+					wrtieInConsoleAll();
 					step = step - 1;
+					
 				}
 			}
 		});
@@ -330,6 +344,16 @@ public class WindowEditor extends JFrame {
 		});
 		menuBar.add(btnNewButton_2);
 		
+		JButton btnTiempoEjecucin = new JButton("Tiempo de ejecución");
+		btnTiempoEjecucin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modal.setVisible(true);
+				modal.setVisible(true);
+				time = modal.getTime();
+			}
+		});
+		menuBar.add(btnTiempoEjecucin);
+		
 		
 		
 		
@@ -397,6 +421,7 @@ public class WindowEditor extends JFrame {
 		
 	
 	}
+	
 	
 	public void saveFile(String code){
 	
@@ -531,13 +556,13 @@ public class WindowEditor extends JFrame {
 	
 	public void moveBackwards(){
 		
+		
 		for(int i=0;i<step;i++){
 			list.getOrden().get(i).execute(symbolTable, localSymbolTable);
-			writeInConsole();
 		}
 	}
 	
-	public String getLocalTableData(){
+	public String getLocalTableData(int step){
 		String retur = "";
     	
 		
@@ -561,7 +586,15 @@ public class WindowEditor extends JFrame {
 			this.textArea2.setText("");
 			this.textArea2.setText("Estado de variables paso a paso");
 		}
-		this.textArea2.setText(this.textArea2.getText()+"\n"+getLocalTableData());
+		this.textArea2.setText(this.textArea2.getText()+"\n"+getLocalTableData(step));
+	}
+	
+	public void wrtieInConsoleAll(){
+		this.textArea2.setText("");
+		this.textArea2.setText(this.textArea2.getText()+"Estado de variables paso a paso");
+		for(int i=0;i<step;i++){
+			this.textArea2.setText(this.textArea2.getText()+"\n"+getLocalTableData(i));
+		}
 	}
 	
 	class JTextFieldPrintStream extends PrintStream {
