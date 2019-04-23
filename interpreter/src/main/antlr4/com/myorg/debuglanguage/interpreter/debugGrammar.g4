@@ -201,7 +201,7 @@ subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN subrutinecall_x 
 subrutinecall_x returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
 | {$node = new ArrayList<>(); $line = "";};
 
-returnG returns [ASTNode node, String line]: RETURN operation { $line = $RETURN.text + $operation.line; $node = new Retorno($operation.node,$line); };
+returnG returns [ASTNode node, String line]: RETURN operation { $line = $RETURN.text + $operation.line; $node = new Retorno($operation.node); };
 			
 arguments returns [List<ASTNode> node, String line]: {
 	List<ASTNode> args = new ArrayList<>();
