@@ -142,6 +142,37 @@ public class NaryTreeNode implements java.io.Serializable {
 	public void setSymbolTable(Map<String, Object> symbolTable) {
 		this.symbolTable = symbolTable;
 	}
+	
+	public int getAnchura(NaryTreeNode n){
+		if(n.getChildrenSize() == 0){
+			return 0;
+		}
+		else{
+			int max = 0;
+			
+			for(NaryTreeNode node : n.getChildren()){
+				max = Math.max(n.getChildrenSize(), getAnchura(node));
+			}
+			
+			return max;
+		}
+	}
+	
+	public int getAltura(NaryTreeNode n){
+		if(n.getChildrenSize() == 0){
+			return 0;
+		}
+		else{
+			
+			int max = 0;
+			
+			for(NaryTreeNode node : n.getChildren()){
+				max = Math.max(max, getAltura(node));
+			}
+			
+			return max+1;
+		}
+	}
     
     
 }
