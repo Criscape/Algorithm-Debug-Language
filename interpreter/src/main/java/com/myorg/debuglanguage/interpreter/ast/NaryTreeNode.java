@@ -123,9 +123,25 @@ public class NaryTreeNode implements java.io.Serializable {
     	
     	if(this.symbolTable != null){
     		for(String variable : symbolTable.keySet()){
-        		retur +="nombre: "+variable+" , valor: "+((TypeValue) symbolTable.get(variable)).getValue()+" , tipo: "+
-        				((TypeValue) symbolTable.get(variable)).getDataType();
-        		retur += "\n";
+    			
+    			if(symbolTable.get(variable) instanceof TypeValue){
+    				retur +="nombre: "+variable+" , valor: "+((TypeValue) symbolTable.get(variable)).getValue()+" , tipo: "+
+            				((TypeValue) symbolTable.get(variable)).getDataType();
+            		retur += "\n";
+    			}
+    			else{
+    				
+    				for(Map<String, Object> node : ((ListaDebug)symbolTable.get(variable)).getEntorno()){
+    					for(String key : node.keySet()){
+    						if(node.get(key) instanceof TypeValue){
+    							retur +="nombre: "+key+" , valor: "+((TypeValue) node.get(key)).getValue()+" , tipo: "+
+                        				((TypeValue) node.get(key)).getDataType();
+                        		retur += "\n";
+    						}
+    					}
+    				}
+    				
+    			}
         	}
     	}
     	

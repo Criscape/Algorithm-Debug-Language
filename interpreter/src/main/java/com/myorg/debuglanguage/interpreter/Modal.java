@@ -31,6 +31,7 @@ public class Modal extends JFrame {
 				try {
 					Modal frame = new Modal();
 					frame.setVisible(true);
+					frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,6 +43,7 @@ public class Modal extends JFrame {
 	 * Create the frame.
 	 */
 	public Modal() {
+		this.time  = 0;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -72,10 +74,9 @@ public class Modal extends JFrame {
 		btnAadir = new JButton("Añadir");
 		btnAadir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				setVisible(false);
 				time = Integer.parseInt(textField.getText());
-				System.out.println(time);
+				setVisible(false);
+				
 			}
 		});
 		btnAadir.setBounds(127, 206, 157, 30);
