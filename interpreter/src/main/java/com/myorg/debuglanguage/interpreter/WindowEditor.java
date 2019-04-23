@@ -259,8 +259,7 @@ public class WindowEditor extends JFrame {
 							
 							if(step<list.getOrden().size()){
 								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
-								((ListaEjecucion) symbolTable.get("lista_exec")).getExecuted().set(step, true);
-								System.out.println(localSymbolTable.keySet());
+								
 								writeInConsole();
 								step = step + 1;
 							}

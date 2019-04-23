@@ -14,14 +14,16 @@ public class For implements ASTNode,java.io.Serializable {
 	private ASTNode increment;
 	private ASTNode ascDecType;
 	private List<ASTNode> body;
+	private String line;
 	
-	public For(ASTNode assignation, ASTNode limit, ASTNode increment, ASTNode ascDecType, List<ASTNode> body) {
+	public For(ASTNode assignation, ASTNode limit, ASTNode increment, ASTNode ascDecType, List<ASTNode> body, String line) {
 		super();
 		this.assignation = assignation;
 		this.limit = limit;
 		this.increment = increment;
 		this.ascDecType = ascDecType;
 		this.body = body;
+		this.line = line;
 	}
 
 	@Override
@@ -66,5 +68,8 @@ public class For implements ASTNode,java.io.Serializable {
 		localSymbolTable.remove(a.getId().toString());
 		return null;
 	}
-
+	
+	public String getLine() {
+		return line;
+	}
 }
