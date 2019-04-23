@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,8 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
 		Object dato = null; // Variable para el return de la función
+		boolean posicion = false;
+		int cont_pos = 0;
 		
 		if(symbolTable.containsKey(this.name)){
 			
@@ -97,15 +98,6 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				
 			}
 			
-			
-			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-			//Creación de la lista de debug
-			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-			
-			
-			List<Map<String,Object>> ld = new ArrayList<>();
-			
-			
 			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			//Inicialización de variables de la zona de declaración
 			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -122,9 +114,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			//Ejecución de la función
 			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-			
-			
-			ld.add(newLocal); //Añadiendo entorno a la lista de debug 
+	
 			
 			if(this.subrutine.getFuncOrProc().equals("function")){
 				
@@ -132,24 +122,68 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				
 				for (ASTNode x: this.subrutine.getBody()){
 					
-					if(x instanceof Retorno){
+					if(!((Boolean)symbolTable.get("ejecuto"))){
 						
-						dato = x.execute(symbolTable, newLocal);
-						ret = true;
+						if(x instanceof Retorno){
+							
+							dato = x.execute(symbolTable, newLocal);
+							ret = true;
+						}
+						
+						if(!ret){
+							
+							x.execute(symbolTable, newLocal);
+						}
+					}else{
+						
+						if(!((Boolean)symbolTable.get("guardo"))){
+							
+							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
+						}else{
+							
+							posicion = true;
+							cont_pos = 0;
+							
+							while(posicion){
+								
+								posicion = ((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().get(cont_pos);
+								cont_pos++;
+							}
+							
+							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, x);
+						}
+						
 					}
 					
-					if(!ret){
-						
-						x.execute(symbolTable, newLocal);
-						ld.add(newLocal);
-					}
 				}
 			}else{
 				
 				for (ASTNode x: this.subrutine.getBody()){
 					
-					x.execute(symbolTable, newLocal);
-					ld.add(newLocal);
+					if(!((Boolean)symbolTable.get("ejecuto"))){
+						
+						x.execute(symbolTable, newLocal);
+					}else{
+						
+						if(!((Boolean)symbolTable.get("guardo"))){
+							
+							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
+						}else{
+							
+							posicion = true;
+							cont_pos = 0;
+							
+							while(posicion){
+								
+								posicion = ((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().get(cont_pos);
+								cont_pos++;
+							}
+							
+							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, x);
+						}
+						
+					}
+
 				}
 			}
 			
@@ -158,9 +192,6 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 			//Agregando el arbol de recursión al archivo
 			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 			
-			
-			ListaDebug ld_x = new ListaDebug(ld);
-			newLocal.put("lista_debug", ld_x); //Añadiendo la lista de debug al Map
 			
 			auxTree = this.subrutine.getLast();
 			auxTree.setSymbolTable(newLocal);
@@ -205,20 +236,32 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 			
 				case "print":
 					
-					Object x = args.get(0).execute(symbolTable, localSymbolTable);
+					Print print = new Print(this.args.get(0));
 					
-					if(x instanceof Integer){
+					if(!((Boolean)symbolTable.get("ejecuto"))){
 						
-						System.out.println(Integer.parseInt(x.toString()));
-
-					}else if(x instanceof String || x instanceof Boolean){
-						
-						System.out.println(x.toString());
+						//print.execute(symbolTable, localSymbolTable);
 					}else{
 						
-						System.out.println(x);
+						if(!((Boolean)symbolTable.get("guardo"))){
+							
+							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(print);
+						}else{
+							
+							posicion = true;
+							cont_pos = 0;
+							
+							while(posicion){
+								
+								posicion = ((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().get(cont_pos);
+								cont_pos++;
+							}
+							
+							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, print);
+						}
+						
 					}
-					
+
 					break;
 				
 			}

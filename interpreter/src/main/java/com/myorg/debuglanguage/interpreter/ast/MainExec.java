@@ -25,13 +25,21 @@ public class MainExec implements ASTNode,java.io.Serializable {
 		for (ASTNode n : this.body) {
 			//n.execute(symbolTable, localSymbolTable);
 			
-			/*if(n instanceof SubRutExec){
+			if(n instanceof SubRutExec){
 				
 				n.execute(symbolTable, localSymbolTable);
-			}*/
+				symbolTable.put("ejecuto", true);
+				n.execute(symbolTable, localSymbolTable);
+				symbolTable.put("ejecuto", false);
+
+			}else{
+
+				((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
+			}
 			
-			((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 		}
+				
+		symbolTable.put("guardo", true);//?
 		
 		return null;
 	}
