@@ -42,7 +42,7 @@ public class Main {
 
 		debugGrammarLexer lexer2 = new debugGrammarLexer(new ANTLRFileStream(program));
 		
-		String aux = "";
+		/*String aux = "";
 		int auxint = 1;
 		for(Token node : lexer2.getAllTokens()){
 			if(node.getLine() == auxint){
@@ -53,9 +53,9 @@ public class Main {
 				aux += node.getText();
 				auxint++;
 			}
-		}
+		}*/
 		
-		System.out.println(aux);
+		//System.out.println(aux);
 	}
 
 }
