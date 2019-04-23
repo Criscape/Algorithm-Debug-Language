@@ -4,7 +4,7 @@ package com.myorg.debuglanguage.interpreter;
 
   /**
  *
- * @author d XD
+ * @author SebastianDuque
  */
 
 import java.awt.*;

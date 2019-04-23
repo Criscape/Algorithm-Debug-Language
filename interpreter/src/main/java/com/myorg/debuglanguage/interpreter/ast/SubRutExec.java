@@ -151,6 +151,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 							}
 							
 							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, x);
+							((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().set(cont_pos-1,false);
 						}
 						
 					}
@@ -180,6 +181,8 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 							}
 							
 							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, x);
+							((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().set(cont_pos-1,false);
+							
 						}
 						
 					}

@@ -249,6 +249,7 @@ public class WindowEditor extends JFrame {
 				localSymbolTable = new HashMap<>();
 				
 				symbolTable.put("guardo",true);
+				symbolTable.put("ejecuto",true);
 					
 					
 					timer = new Timer(modal.getTime()*1000, new ActionListener(){
@@ -258,7 +259,8 @@ public class WindowEditor extends JFrame {
 							
 							if(step<list.getOrden().size()){
 								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
-								list.getExecuted().set(step, true);
+								((ListaEjecucion) symbolTable.get("lista_exec")).getExecuted().set(step, true);
+								System.out.println(localSymbolTable.keySet());
 								writeInConsole();
 								step = step + 1;
 							}
@@ -582,7 +584,7 @@ public class WindowEditor extends JFrame {
 		
 		FileInputStream file = null;
 		try {
-			file = new FileInputStream("test/arbol-Noo1.ntn");
+			file = new FileInputStream("test/arbol-No1.ntn");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
