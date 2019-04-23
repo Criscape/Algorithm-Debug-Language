@@ -11,10 +11,12 @@ public class MainExec implements ASTNode,java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<ASTNode> body;
+	private String line;
 	
-	public MainExec(List<ASTNode> body) {
+	public MainExec(List<ASTNode> body, String line) {
 		super();
 		this.body = body;
+		this.line = line;
 	}
 
 	@Override
@@ -23,25 +25,17 @@ public class MainExec implements ASTNode,java.io.Serializable {
 		localSymbolTable = new HashMap<>();
 		
 		for (ASTNode n : this.body) {
+			
 			//n.execute(symbolTable, localSymbolTable);
 			
-			if(n instanceof SubRutExec){
-				
-				n.execute(symbolTable, localSymbolTable);
-				symbolTable.put("ejecuto", true);
-				n.execute(symbolTable, localSymbolTable);
-				symbolTable.put("ejecuto", false);
-
-			}else{
-
-				((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
-			}
+			((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 			
 		}
-				
-		symbolTable.put("guardo", true);//?
-		
+						
 		return null;
 	}
-
+	
+	public String getLine() {
+		return line;
+	}
 }

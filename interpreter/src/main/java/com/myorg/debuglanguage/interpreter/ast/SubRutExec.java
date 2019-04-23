@@ -28,8 +28,6 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
 		Object dato = null; // Variable para el return de la función
-		boolean posicion = false;
-		int cont_pos = 0;
 		
 		if(symbolTable.containsKey(this.name)){
 			
@@ -106,7 +104,6 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 			for (int i = 0; i < this.subrutine.getDeclarations().size(); i++){
 				
 				Declaration declare = (Declaration)this.subrutine.getDeclarations().get(i);
-
 				declare.execute(symbolTable, newLocal);
 			}
 			
@@ -122,71 +119,24 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				
 				for (ASTNode x: this.subrutine.getBody()){
 					
-					if(!((Boolean)symbolTable.get("ejecuto"))){
 						
-						if(x instanceof Retorno){
-							
-							dato = x.execute(symbolTable, newLocal);
-							ret = true;
-						}
+					if(x instanceof Retorno){
 						
-						if(!ret){
-							
-							x.execute(symbolTable, newLocal);
-						}
-					}else{
+						dato = x.execute(symbolTable, newLocal);
+						ret = true;
+					}
+					
+					if(!ret){
 						
-						if(!((Boolean)symbolTable.get("guardo"))){
-							
-							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
-						}else{
-							
-							posicion = true;
-							cont_pos = 0;
-							
-							while(posicion){
-								
-								posicion = ((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().get(cont_pos);
-								cont_pos++;
-							}
-							
-							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, x);
-							((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().set(cont_pos-1,false);
-						}
-						
+						x.execute(symbolTable, newLocal);
 					}
 					
 				}
 			}else{
 				
 				for (ASTNode x: this.subrutine.getBody()){
-					
-					if(!((Boolean)symbolTable.get("ejecuto"))){
 						
-						x.execute(symbolTable, newLocal);
-					}else{
-						
-						if(!((Boolean)symbolTable.get("guardo"))){
-							
-							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
-						}else{
-							
-							posicion = true;
-							cont_pos = 0;
-							
-							while(posicion){
-								
-								posicion = ((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().get(cont_pos);
-								cont_pos++;
-							}
-							
-							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, x);
-							((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().set(cont_pos-1,false);
-							
-						}
-						
-					}
-
+					x.execute(symbolTable, localSymbolTable);
 				}
 			}
 			
@@ -240,30 +190,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				case "print":
 					
 					Print print = new Print(this.args.get(0));
-					
-					if(!((Boolean)symbolTable.get("ejecuto"))){
-						
-						//print.execute(symbolTable, localSymbolTable);
-					}else{
-						
-						if(!((Boolean)symbolTable.get("guardo"))){
-							
-							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(print);
-						}else{
-							
-							posicion = true;
-							cont_pos = 0;
-							
-							while(posicion){
-								
-								posicion = ((ListaEjecucion)symbolTable.get("lista_exec")).getExecuted().get(cont_pos);
-								cont_pos++;
-							}
-							
-							((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(cont_pos - 1, print);
-						}
-						
-					}
+					print.execute(symbolTable, localSymbolTable);
 
 					break;
 				

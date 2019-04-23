@@ -26,9 +26,6 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	ListaEjecucion lista_exec = new ListaEjecucion(debuggerList);
 	symbolTable.put("lista_exec",lista_exec);
 	
-	symbolTable.put("ejecuto",false);
-	symbolTable.put("guardo",false);
-	
 	for (ASTNode n : subrt){
 		
 		n.execute(symbolTable,localSymbolTable);
@@ -36,10 +33,6 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	}
 	
 	$main.node.execute(symbolTable,localSymbolTable);
-	/*((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add($main.node);*/
-	
-	((ListaEjecucion)symbolTable.get("lista_exec")).initExecuted();
-	
 	String filename = "test/lista_ejecucion.ntn";
 	
 	File f = new File(filename);
@@ -66,15 +59,16 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	}
 };
 
-main returns [ASTNode node]: MAIN LPAREN RPAREN instruction
+main returns [ASTNode node, String line]: MAIN LPAREN RPAREN instruction
 {
-	$node = new MainExec($instruction.node);
+	$line = $MAIN.text + $LPAREN.text + $RPAREN.text;
+	$node = new MainExec($instruction.node,$line);	
 };
 
 subrutine returns [ASTNode node]: function {$node = $function.node;} 
 | procedure {$node = $procedure.node;};
 
-function returns [ASTNode node]: DATATYPE FUNCTION ID features 
+function returns [ASTNode node, String line]: DATATYPE FUNCTION ID features 
 {
 	$node = new Subrutine($DATATYPE.text,$FUNCTION.text,$ID.text,
 		$features.node.get(0), $features.node.get(1), $features.node.get(2));
@@ -126,12 +120,14 @@ DATATYPE t1=idorvector {ids.add($t1.node);}
  	$node = new Declaration($DATATYPE.text,ids);
  };
 
-idorvector returns [ASTNode node]: d2=ID {$node = new Constant($d2.text,"");}
-			| d3=ID LSQUARE t0=NUMBER RSQUARE {$node = new Constant($d3.text+"["+$t0.text+"]","");}
-			| d4=ID LSQUARE t1=NUMBER RSQUARE LSQUARE t2=NUMBER RSQUARE {$node = new Constant($d4.text+"["+$t1.text+"]"+"["+$t2.text+"]","");}
-			| d5=ID LSQUARE d1=ID RSQUARE {$node = new Constant($d5.text+"["+$d1.text+"]","");};
+idorvector returns [ASTNode node, String line]: d2=ID {$node = new Constant($d2.text,""); $line = $d2.text;}
+			| d3=ID LSQUARE t0=NUMBER RSQUARE {$node = new Constant($d3.text+"["+$t0.text+"]",""); $line = $d3.text + $LSQUARE.text + $t0.text + $RSQUARE.text;}
+			| d4=ID LSQUARE t1=NUMBER RSQUARE LSQUARE t2=NUMBER RSQUARE {$node = new Constant($d4.text+"["+$t1.text+"]"+"["+$t2.text+"]","");
+				$line = $d4.text + $LSQUARE.text + $t1.text + $RSQUARE.text + $LSQUARE.text + $t2.text + $RSQUARE.text;}
+			| d5=ID LSQUARE d1=ID RSQUARE {$node = new Constant($d5.text+"["+$d1.text+"]","");
+				$line = $d5.text + $LSQUARE.text + $d1.text + $RSQUARE.text;};
 
-instruction returns [List<ASTNode> node]: LCURLY {List<ASTNode> body = new ArrayList<>();}
+instruction returns [List<ASTNode> node, String line]: LCURLY {List<ASTNode> body = new ArrayList<>();}
  (expression {body.add($expression.node);})* RCURLY {$node = body;};
 
 expression returns [ASTNode node]: assignation SEMICOLON {$node = $assignation.node;}
@@ -140,52 +136,52 @@ expression returns [ASTNode node]: assignation SEMICOLON {$node = $assignation.n
  | returnG SEMICOLON {$node = $returnG.node;}
  | declaration {$node = $declaration.node;};
 
-assignation returns [ASTNode node]: idorvector ASSIGN (
-	operation {$node = new Assign($idorvector.node,$operation.node);}
-	| list {$node = new Assign($idorvector.node,$list.node);}
+assignation returns [ASTNode node, String line]: idorvector ASSIGN (
+	operation {$node = new Assign($idorvector.node,$operation.node); $line = $idorvector.line + $ASSIGN.text + $operation.line;}
+	| list {$node = new Assign($idorvector.node,$list.node); $line = $list.line;}
 );
 
-condition returns [ASTNode node]: c1=condition OR t1=condition1 
-{$node = new Condition($c1.node,$t1.node,$OR.text);}
-		| t2=condition1 {$node = $t2.node;};
+condition returns [ASTNode node, String line]: c1=condition OR t1=condition1 
+{$node = new Condition($c1.node,$t1.node,$OR.text); $line = $c1.line + $OR.text + $t1.line;}
+		| t2=condition1 {$node = $t2.node; $line = $t2.line;};
 
-condition1 returns [ASTNode node]: c1=condition1 AND t1=condition2
-{$node = new Condition($c1.node,$t1.node,$AND.text);}
-		| t2=condition2 {$node = $t2.node;};
+condition1 returns [ASTNode node, String line]: c1=condition1 AND t1=condition2
+{$node = new Condition($c1.node,$t1.node,$AND.text); $line = $c1.line + $AND.text + $t1.line;}
+		| t2=condition2 {$node = $t2.node; $line = $t2.line;};
 		
-condition2 returns [ASTNode node]: s1=condition2 EQUALS t1=condition3
-{$node = new Condition($s1.node,$t1.node,$EQUALS.text);}
+condition2 returns [ASTNode node, String line]: s1=condition2 EQUALS t1=condition3
+{$node = new Condition($s1.node,$t1.node,$EQUALS.text); $line = $s1.line + $EQUALS.text + $t1.line;}
 		| s2=condition2 ODD t2=condition3
-{$node = new Condition($s2.node,$t2.node,$ODD.text);}
-		| t3=condition3 {$node = $t3.node;};
+{$node = new Condition($s2.node,$t2.node,$ODD.text); $line = $s2.line + $ODD.text + $t2.line;}
+		| t3=condition3 {$node = $t3.node; $line = $t3.line;};
 		
-condition3 returns [ASTNode node]: c1=condition3 COMP t1=operation 
-{$node = new Condition($c1.node,$t1.node,$COMP.text);}
-		| t2=operation {$node = $t2.node;}
-		| LPAREN condition RPAREN {$node = $condition.node;};
+condition3 returns [ASTNode node, String line]: c1=condition3 COMP t1=operation 
+{$node = new Condition($c1.node,$t1.node,$COMP.text); $line = $c1.line + $COMP.text + $t1.line;}
+		| t2=operation {$node = $t2.node; $line = $t2.line;}
+		| LPAREN condition RPAREN {$node = $condition.node; $line = $LPAREN + $condition.line + $RPAREN;};
 		
-operation returns [ASTNode node]: t1=operation {$node = $t1.node;}
- PLUS s1=operation1 {$node = new Evaluation($node, $s1.node, $PLUS.text);}
- | t2=operation {$node = $t2.node;} 
- MINUS s2=operation1 {$node = new Evaluation($node, $s2.node, $MINUS.text);}
- | s3=operation1 {$node = $s3.node;};
+operation returns [ASTNode node, String line]: t1=operation {$node = $t1.node; $line = $t1.line;}
+ PLUS s1=operation1 {$node = new Evaluation($node, $s1.node, $PLUS.text); $line = $line + $s1.line;}
+ | t2=operation {$node = $t2.node; $line = $t2.line;} 
+ MINUS s2=operation1 {$node = new Evaluation($node, $s2.node, $MINUS.text); $line = $line + $s2.line;}
+ | s3=operation1 {$node = $s3.node; $line = $s3.line;};
 
-operation1 returns [ASTNode node]: t1=operation1 {$node = $t1.node;}
- TIMES operation2 {$node = new Evaluation($node, $operation2.node, $TIMES.text);}
- | t2=operation1 {$node = $t2.node;}
- DIVIDE operation2 {$node = new Evaluation($node, $operation2.node, $DIVIDE.text);}
- | operation2 {$node = $operation2.node;};
+operation1 returns [ASTNode node, String line]: t1=operation1 {$node = $t1.node; $line = $t1.line;}
+ TIMES ss1=operation2 {$node = new Evaluation($node, $ss1.node, $TIMES.text); $line = $line + $ss1.line;}
+ | t2=operation1 {$node = $t2.node; $line = $t2.line;}
+ DIVIDE ss2=operation2 {$node = new Evaluation($node, $ss2.node, $DIVIDE.text); $line = $line + $ss2.line;}
+ | ss3=operation2 {$node = $ss3.node; $line = $ss3.line;};
 		
-operation2 returns [ASTNode node]: idorvector {$node = new VarRef($idorvector.node);}
-		| NEGATE t1=operation2 {$node = new Negacion($t1.node);}
-		| data_auxiliar {$node = $data_auxiliar.node;}
-		| LPAREN operation RPAREN {$node = $operation.node;}
-		| subrutinecall {$node = $subrutinecall.node;};
+operation2 returns [ASTNode node, String line]: idorvector {$node = new VarRef($idorvector.node); $line = $idorvector.line;}
+		| NEGATE t1=operation2 {$node = new Negacion($t1.node); $line = $NEGATE.text + $t1.line;}
+		| data_auxiliar {$node = $data_auxiliar.node; $line = $data_auxiliar.line;}
+		| LPAREN operation RPAREN {$node = $operation.node; $line = $LPAREN.text + $operation.line + $RPAREN.text;}
+		| subrutinecall {$node = $subrutinecall.node; $line = $subrutinecall.line;};
 		
-data_auxiliar returns [ASTNode node]: NUMBER {$node = new Constant(Integer.parseInt($NUMBER.text),"");}
- | BOOL {$node = new Constant(Boolean.parseBoolean($BOOL.text),"");} 
- | MINUS NUMBER {$node = new Constant(Integer.parseInt($NUMBER.text),"-");}
- | STR {$node = new Constant($STR.text,"str");};
+data_auxiliar returns [ASTNode node, String line]: NUMBER {$node = new Constant(Integer.parseInt($NUMBER.text),""); $line = $NUMBER.text;}
+ | BOOL {$node = new Constant(Boolean.parseBoolean($BOOL.text),""); $line = $BOOL.text;} 
+ | MINUS NUMBER {$node = new Constant(Integer.parseInt($NUMBER.text),"-"); $line = $MINUS.text + $NUMBER.text;}
+ | STR {$node = new Constant($STR.text,"str"); $line = $STR.text;};
 
 structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | whileG {$node = $whileG.node;}
@@ -193,28 +189,33 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | switchG {$node = $switchG.node;}
 | repeat {$node = $repeat.node;};
 
-subrutinecall returns [ASTNode node]: t1=ID LPAREN subrutinecall_x RPAREN {$node = new SubRutExec($t1.text,$subrutinecall_x.node);}
-| t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);};
+subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN subrutinecall_x RPAREN {$node = new SubRutExec($t1.text,$subrutinecall_x.node);
+	$line = $t1.text + $LPAREN.text + $subrutinecall_x.line + $RPAREN.text;}
+| t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);
+	$line = $t2.text + $POINT.text + $LPAREN.text + $ss2.line + $RPAREN.text;
+};
 
-subrutinecall_x returns [List<ASTNode> node]: arguments {$node = $arguments.node;}| {$node = new ArrayList<>();};
+subrutinecall_x returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
+| {$node = new ArrayList<>(); $line = "";};
 
-returnG returns [ASTNode node]: RETURN operation {$node = new Retorno($operation.node);};
+returnG returns [ASTNode node, String line]: RETURN operation {$node = new Retorno($operation.node); $line = $RETURN.text + $operation.line;};
 			
-arguments returns [List<ASTNode> node]: {
+arguments returns [List<ASTNode> node, String line]: {
 	List<ASTNode> args = new ArrayList<>();
 }
-t1=operation {args.add($t1.node);} (COMMA t2=operation {args.add($t2.node);})*
+t1=operation {args.add($t1.node); $line = $t1.line;} (COMMA t2=operation {args.add($t2.node); $line += $COMMA.text + $t2.line;})*
 {
 	$node = args;
 };
 
-list returns [ASTNode node]: {
+list returns [ASTNode node, String line]: {
 	List<ASTNode> components = new ArrayList<>();
 }
-LCURLY (t1=data_auxiliar {components.add($t1.node);}
- (COMMA t2=data_auxiliar {components.add($t2.node);})*)? RCURLY
+LCURLY (t1=data_auxiliar {components.add($t1.node); $line = $LCURLY.text + $t1.line;}
+ (COMMA t2=data_auxiliar {components.add($t2.node); $line += $t2.line;})*)? RCURLY
  {
  	$node = new NodeList(components);
+ 	$line += $RCURLY.text;
  };
 
 ifG returns [ASTNode node]: IF condition t1=instruction 
@@ -235,32 +236,37 @@ whileG returns [ASTNode node]: WHILE condition instruction
 	$node = new While($condition.node,body); 
 };
 
-forG returns [ASTNode node]: FOR LPAREN assignation for1 RPAREN instruction
+forG returns [ASTNode node, String line]: FOR LPAREN assignation for1 RPAREN instruction
 {
 	List<ASTNode> body = new ArrayList<>();
 	body = $instruction.node;
-	$node = new For($assignation.node,$for1.node[0],$for1.node[1],$for1.node[2],body);	
+	$line = $FOR.text + $LPAREN.text + $assignation.line + $for1.line + $RPAREN.text;
+	$node = new For($assignation.node,$for1.node[0],$for1.node[1],$for1.node[2],body,$line);	
 };
 
-for1 returns [ASTNode[] node]: TO t1=operation INC t2=operation
+for1 returns [ASTNode[] node, String line]: TO t1=operation INC t2=operation
 {
 	ASTNode[] x = {$t1.node,$t2.node,new Constant("asc","")};
 	$node = x;
+	$line = $TO.text + $t1.line + $INC.text + $t2.line;
 }
 	| TO t3=operation
 {
 	ASTNode[] y = {$t3.node,new Constant(1,""),new Constant("asc","")};
 	$node = y;
+	$line = $TO.text + $t3.line;
 }
 	| DOWNTO t4=operation DEC t5=operation
 {
 	ASTNode[] z = {$t4.node,$t5.node,new Constant("dec","")};
 	$node = z;
+	$line = $DOWNTO.text + $t4.line + $DEC.text + $t5.line;
 }
 	| DOWNTO t6=operation
 {
 	ASTNode[] w = {$t6.node,new Constant(1,""),new Constant("dec","")};
 	$node = w;
+	$line = $DOWNTO.text + $t6.line;
 };
 	
 switchG returns [ASTNode node]: SWITCH LPAREN idorvector RPAREN

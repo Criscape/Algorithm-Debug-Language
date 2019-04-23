@@ -40,7 +40,7 @@ public class Evaluation implements ASTNode,java.io.Serializable {
 					
 					return ((int)obj1 + (String)obj2);
 				}
-				
+
 				return ((int)obj1 + (int)obj2);
 			case "-":
 				return ((int)obj1 - (int)obj2);

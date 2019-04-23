@@ -28,9 +28,8 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-
-	<classpathentry kind="lib" path="C:/Users/Sebastian/Downloads/rsyntaxtextarea-3.0.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Sebastian/Downloads/jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Sebastian/Downloads/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/crist/Downloads/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/crist/Downloads/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/crist/Downloads/rsyntaxtextarea-3.0.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
