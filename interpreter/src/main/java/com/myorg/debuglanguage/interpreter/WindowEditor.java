@@ -15,7 +15,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import com.myorg.debuglanguage.interpreter.ast.NaryTreeNode;
 import com.myorg.debuglanguage.interpreter.ast.TypeValue;
+import com.myorg.debuglanguage.interpreter.ast.While;
+import com.google.inject.matcher.Matcher;
 import com.myorg.debuglanguage.interpreter.ast.ASTNode;
+import com.myorg.debuglanguage.interpreter.ast.For;
 import com.myorg.debuglanguage.interpreter.ast.ListaEjecucion;
 
 
@@ -38,6 +41,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -82,7 +86,8 @@ public class WindowEditor extends JFrame {
 	private int time;
 	private Timer timer;
 	private Graph grapher;
-	 
+	private HashMap<String, Integer> ejecucion;
+	private PlayMode play;
 
 	/**
 	 * Launch the application.
@@ -131,6 +136,11 @@ public class WindowEditor extends JFrame {
 	    
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
 	    //System.setOut(print);
+	    
+	    this.play = new PlayMode();
+	    this.play.setVisible(false);;
+	    
+	    ejecucion = new HashMap<String, Integer>();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1412, 752);
@@ -154,7 +164,7 @@ public class WindowEditor extends JFrame {
 	    
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 819, 43);
+		menuBar.setBounds(0, 0, 939, 43);
 		menuBar.setBackground(SystemColor.control);
 		menuBar.setBorderPainted(false);
 		contentPane.add(menuBar);
@@ -195,7 +205,7 @@ public class WindowEditor extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				getTextLines();
+			
 				long start = System.currentTimeMillis();
 				
 				textArea.setText("Console:>> \n");
@@ -222,11 +232,12 @@ public class WindowEditor extends JFrame {
 				debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
 				visitor.visit(tree2);
 				
-				System.out.println("");
+				/*System.out.println("");
 				System.out.println(tree2.getChild(1).getChild(0).getText());
 				System.out.println(tree2.getChild(1).getChild(1).getText());
 				System.out.println(tree2.getChild(1).getChild(2).getText());
 				System.out.println(tree2.getChild(1).getChild(3).getText());
+				*/
 				long end = System.currentTimeMillis();
 				float sec = (end - start) / 1000F;
 				System.out.println("Tiempo total: "+sec+" segundos");
@@ -237,6 +248,7 @@ public class WindowEditor extends JFrame {
 				//NaryTreeNode.print(tree);
 				//System.out.println(tree.getChildrenSize());
 				//System.out.println(this.tree.getLabel());
+				
 				repintarArbol();
 				
 				
@@ -244,8 +256,10 @@ public class WindowEditor extends JFrame {
 				loadList();
 				
 				step = 0;
-
+				
+				
 				symbolTable = new HashMap<>();
+				ejecucion = new HashMap<>();
 				localSymbolTable = new HashMap<>();
 				
 				symbolTable.put("guardo",true);
@@ -259,19 +273,66 @@ public class WindowEditor extends JFrame {
 							
 							if(step<list.getOrden().size()){
 								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
-								((ListaEjecucion) symbolTable.get("lista_exec")).getExecuted().set(step, true);
-								System.out.println(localSymbolTable.keySet());
+								int varaux;
+								if((varaux = getLinesPerLines("for")) != 0){
+									draw(varaux);
+								}
+								
+								if(list.getOrden().get(step) instanceof For){
+									
+									
+									if(ejecucion.containsKey("for")){
+										
+										ejecucion.put("for",
+												ejecucion.get("for")+1);
+										
+									}
+									else{
+										
+										int fors = buscaFor();
+										ejecucion.put("for",fors);
+									}
+								
+								}
+								
+								if(list.getOrden().get(step) instanceof While){
+									
+									
+									if(ejecucion.containsKey("while")){
+										
+										ejecucion.put("while",
+												ejecucion.get("while")+1);
+										
+									}
+									else{
+										
+										ejecucion.put("while",1);
+									}
+								
+								}
+								
+								
+								//System.out.println("OJOOO");
+								//System.out.println(ejecucion);
+								
+								//((ListaEjecucion) symbolTable.get("lista_exec")).getExecuted().set(step, true);
+								//System.out.println(localSymbolTable.keySet());
 								writeInConsole();
 								step = step + 1;
 							}
 							else{
 								timer.stop();
+								grapher.graph(ejecucion);
+								draw(-1);
 							}
 							
 						}
 					});
 					timer.start();
-				}
+				
+		
+			}
+		
 				
 		});
 		menuBar.add(btnNewButton_1);
@@ -406,7 +467,7 @@ public class WindowEditor extends JFrame {
 		});
 		menuBar.add(btnTiempoEjecucin);
 		
-		JButton btnGraficar = new JButton("Graficar");
+		JButton btnGraficar = new JButton("Graficar     ");
 		btnGraficar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				grapher.getJframe().setVisible(true);
@@ -417,6 +478,19 @@ public class WindowEditor extends JFrame {
 		btnGraficar.setBorder(BorderFactory.createEmptyBorder());
 		btnGraficar.setContentAreaFilled(false);
 		menuBar.add(btnGraficar);
+		
+		JButton btnMiniQuiz = new JButton("Mini Quiz");
+		btnMiniQuiz.setBorder(BorderFactory.createEmptyBorder());
+		btnMiniQuiz.setContentAreaFilled(false);
+		btnMiniQuiz.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				play.setArbol(tree, complejidad());
+				play.setVisible(true);
+				
+			}
+		});
+		btnMiniQuiz.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/paste.png")));
+		menuBar.add(btnMiniQuiz);
 		
 		
 		
@@ -658,13 +732,63 @@ public class WindowEditor extends JFrame {
 		}
 	}
 	
-	public void getTextLines(){
+	public String getTextLines(){
+		String code = ((editor) internalFrame).getTextArea().getText();
+		//String[] data = code.split("\n");
+		
+		
+		//for(int i=0;i<data.length;i++){
+		//	System.out.println(data[i]);
+		//}
+		
+		return code;
+	}
+	
+	public int getLinesPerLines(String find){
 		String code = ((editor) internalFrame).getTextArea().getText();
 		String[] data = code.split("\n");
+		String strTmp = "";
 		
 		for(int i=0;i<data.length;i++){
-			System.out.println(data[i]);
+			strTmp = data[i];
+			if(strTmp.matches(".*"+find+".*")){
+				return i+1;
+			}
 		}
+		
+		return 0;
+	}
+	
+	public void draw(int line){
+		((editor) internalFrame).draw(line);
+	}
+	
+	public int buscaFor(){
+		
+		String texto = getTextLines();
+		int numberWords = 0;
+	    Pattern p = Pattern.compile("\\b+"+"for"+"\\b");
+	    java.util.regex.Matcher  m = p.matcher(texto);
+	       
+	    
+	    while(m.find()){
+	           numberWords += 1;
+	       }
+	    
+		return numberWords;
+	}
+	
+	public int altura(){
+		return tree.getAltura(tree);
+	}
+	
+	public int anchura(){
+		
+		return tree.getAnchura(tree);
+	}
+	
+	public int complejidad(){
+		return buscaFor();
 	}
 	
 	class JTextFieldPrintStream extends PrintStream {

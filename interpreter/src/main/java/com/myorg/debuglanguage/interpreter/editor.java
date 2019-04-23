@@ -44,6 +44,12 @@ public class editor extends JInternalFrame {
 	IconRowHeader iconArea;
 	HashMap<String, Object> breakLines;
 	
+	int actualLine;
+	Object actualLineO;
+	int beforeLine;
+	Object beforeLineO;
+	
+	
    public editor() throws BadLocationException, PropertyVetoException {
    	setRootPaneCheckingEnabled(false);
    	setEnabled(false);
@@ -119,6 +125,24 @@ public class editor extends JInternalFrame {
    
    public JTextArea getTextArea(){
 	   return this.textArea;
+   }
+   
+   public void draw(int line){
+	   if(line == -1){
+		   syntaxTextArea.removeLineHighlight(beforeLineO);
+	   }
+	   else{
+		   syntaxTextArea.removeLineHighlight(beforeLineO);
+		   try {
+			beforeLineO = syntaxTextArea.addLineHighlight(line, breakPointColor);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	   }
+	   
+	   
+	   
    }
 
    public static void main(String[] args) {

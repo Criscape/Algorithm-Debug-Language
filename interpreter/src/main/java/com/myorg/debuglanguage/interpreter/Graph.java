@@ -2,7 +2,8 @@ package com.myorg.debuglanguage.interpreter;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
- 
+import java.util.HashMap;
+
 import javax.swing.JFrame;
  
 import org.jfree.chart.ChartFactory;
@@ -18,30 +19,27 @@ public class Graph
 {
 	
 	private JFrame ventana;
+	private XYSeriesCollection dataset;
  
         public Graph() {
  
                 //Informacion
  
-                XYSeries carro = new XYSeries("Automovil");
-                carro.add(1.0, 1.0);
-                carro.add(2.0, 4.0);
-                carro.add(3.0, 3.0);
+                XYSeries funcion1 = new XYSeries("Funcion1");
+                XYSeries funcion2 = new XYSeries("Funcion2");
+                XYSeries funcion3 = new XYSeries("Funcion3");
+                
+                for(int x=0;x<10;x++){
+                	funcion1.add(x,Math.pow(x, 2));
+                	funcion2.add(x,Math.pow(x, 3));
+                	//funcion3.add(x,Math.log(x));
+                }
+                
  
-                XYSeries bici = new XYSeries("Bicicleta");
-                bici.add(1.0, 4.0);
-                bici.add(2.0, 5.0);
-                bici.add(3.0, 6.0);
- 
-                XYSeries moto = new XYSeries("Motocicleta");
-                moto.add(3.0, 4.0);
-                moto.add(4.0, 5.0);
-                moto.add(5.0, 4.0);
- 
-                XYSeriesCollection dataset = new XYSeriesCollection();
-                dataset.addSeries(carro);
-                dataset.addSeries(bici);
-                dataset.addSeries(moto);
+                dataset = new XYSeriesCollection();
+                dataset.addSeries(funcion1);
+                dataset.addSeries(funcion2);
+                dataset.addSeries(funcion3);
  
                 JFreeChart xylineChart = ChartFactory.createXYLineChart(
                                 "Tiempo real vs. tiempo teoríco",
@@ -73,6 +71,80 @@ public class Graph
                 
                 ventana.add(panel);
  
+        }
+        
+        public void graph(HashMap<String, Integer> map){
+        	
+        	dataset.removeAllSeries();
+        	
+        	for(String key:map.keySet()){
+        		XYSeries funcion = new XYSeries(key);
+            	
+        		
+        		for(int x=0;x<10;x++){
+        			if(key.equals("while")){
+        				funcion.add(x,Math.log1p(x));
+        			}
+        			else{
+        				funcion.add(x,Math.pow(x, map.get(key)));
+        			}
+            	}
+            	dataset.addSeries(funcion);
+            }
+        	
+        }
+        
+        public int[] getFunction(String function){
+        	if(function == "n2"){
+        		return getn2();
+        	}
+        	
+        	return null;
+        }
+        
+        public int[] getlog(){
+        	int [] answer = new int[10];
+        	for(int x=0;x<10;x++){
+            	answer[x] = (int) Math.log(x);
+            }
+        	
+        	return answer;
+        }
+        
+        public int[] getn(){
+        	int [] answer = new int[10];
+        	for(int x=0;x<10;x++){
+            	answer[x] = x;
+            }
+        	
+        	return answer;
+        }
+        
+        public int[] getn2(){
+        	int [] answer = new int[10];
+        	for(int x=0;x<10;x++){
+            	answer[x] = (int) Math.pow(x, 2);
+            }
+        	
+        	return answer;
+        }
+        
+        public int[] getn3(){
+        	int [] answer = new int[10];
+        	for(int x=0;x<10;x++){
+            	answer[x] = (int) Math.pow(x, 3);
+            }
+        	
+        	return answer;
+        }
+        
+        public int[] getn4(){
+        	int [] answer = new int[10];
+        	for(int x=0;x<10;x++){
+            	answer[x] = (int) Math.pow(x, 3);
+            }
+        	
+        	return answer;
         }
         
         public JFrame getJframe(){
