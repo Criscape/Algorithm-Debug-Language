@@ -46,6 +46,7 @@ import java.awt.Font;
 import java.awt.List;
 import java.awt.Rectangle;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.SystemColor;
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
@@ -60,6 +61,9 @@ import javax.swing.UIManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JTable;
+import javax.swing.ImageIcon;
+import javax.swing.JSeparator;
+import javax.swing.JLabel;
 
 public class WindowEditor extends JFrame {
 
@@ -74,8 +78,10 @@ public class WindowEditor extends JFrame {
 	Map<String, Object> symbolTable;
 	Map<String, Object> localSymbolTable;
 	private Modal modal;
+	private ModalPreguntar modalPreguntar;
 	private int time;
 	private Timer timer;
+	private Graph grapher;
 	 
 
 	/**
@@ -116,6 +122,12 @@ public class WindowEditor extends JFrame {
 	    this.time = 0;
 	    this.modal = new Modal();
 	    modal.setVisible(false);
+	    this.modalPreguntar =  new ModalPreguntar();
+	    modalPreguntar.setVisible(false);
+	    
+	    //Initialize grapher
+	    this.grapher = new Graph();
+	    this.grapher.getJframe().setVisible(false);
 	    
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
 	    //System.setOut(print);
@@ -142,24 +154,31 @@ public class WindowEditor extends JFrame {
 	    
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 819, 30);
+		menuBar.setBounds(0, 0, 819, 43);
 		menuBar.setBackground(SystemColor.control);
 		menuBar.setBorderPainted(false);
 		contentPane.add(menuBar);
 		
+		JLabel lblNewLabel = new JLabel("     ");
+		menuBar.add(lblNewLabel);
 		
-		JButton btnNewButton = new JButton("Break Point");
+		
+		JButton btnNewButton = new JButton("Break Point     ");
+		btnNewButton.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/broken-link.png")));
+		btnNewButton.setBorder(BorderFactory.createEmptyBorder());
+		btnNewButton.setContentAreaFilled(false);
 		menuBar.add(btnNewButton);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setViewportBorder(new CompoundBorder());
+		scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setBounds(10, 529, 687, 173);
 		contentPane.add(scrollPane);
 		
 		
 		this.textArea = new JTextPane();
+		textArea.setText("Consola >>");
 		
 		scrollPane.setViewportView(textArea);
 		this.textArea.setForeground(new Color(0, 0, 0));
@@ -169,11 +188,14 @@ public class WindowEditor extends JFrame {
 		
 		UIManager.put("ScrollBar.thumb", new ColorUIResource(Color.black));
 		
-		JButton btnNewButton_1 = new JButton("Ejecutar");
+		JButton btnNewButton_1 = new JButton("Ejecutar     ");
+		btnNewButton_1.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/file (1).png")));
+		btnNewButton_1.setBorder(BorderFactory.createEmptyBorder());
+		btnNewButton_1.setContentAreaFilled(false);
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				
+				getTextLines();
 				long start = System.currentTimeMillis();
 				
 				textArea.setText("Console:>> \n");
@@ -200,6 +222,11 @@ public class WindowEditor extends JFrame {
 				debugGrammarCustomVisitor visitor = new debugGrammarCustomVisitor();
 				visitor.visit(tree2);
 				
+				System.out.println("");
+				System.out.println(tree2.getChild(1).getChild(0).getText());
+				System.out.println(tree2.getChild(1).getChild(1).getText());
+				System.out.println(tree2.getChild(1).getChild(2).getText());
+				System.out.println(tree2.getChild(1).getChild(3).getText());
 				long end = System.currentTimeMillis();
 				float sec = (end - start) / 1000F;
 				System.out.println("Tiempo total: "+sec+" segundos");
@@ -212,6 +239,8 @@ public class WindowEditor extends JFrame {
 				//System.out.println(this.tree.getLabel());
 				repintarArbol();
 				
+				
+				
 				loadList();
 				
 				step = 0;
@@ -219,9 +248,8 @@ public class WindowEditor extends JFrame {
 				symbolTable = new HashMap<>();
 				localSymbolTable = new HashMap<>();
 					
-					System.out.println("working");
-					System.out.println(time*1000);
-					timer = new Timer(time*1000, new ActionListener(){
+					
+					timer = new Timer(modal.getTime()*1000, new ActionListener(){
 						
 						@Override
 						public void actionPerformed(ActionEvent e){
@@ -246,7 +274,10 @@ public class WindowEditor extends JFrame {
 		
 		
 		//Botón Sigueinte
-		JButton btnSiguiente = new JButton("Siguiente ->");
+		JButton btnSiguiente = new JButton("Siguiente      ");
+		btnSiguiente.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/redo (2).png")));
+		btnSiguiente.setBorder(BorderFactory.createEmptyBorder());
+		btnSiguiente.setContentAreaFilled(false);
 		btnSiguiente.setVisible(false);
 		btnSiguiente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -261,7 +292,10 @@ public class WindowEditor extends JFrame {
 		menuBar.add(btnSiguiente);
 		
 		//Botón atrás
-		JButton btnAtras = new JButton("<- Anterior");
+		JButton btnAtras = new JButton("Anterior     ");
+		btnAtras.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/undo.png")));
+		btnAtras.setBorder(BorderFactory.createEmptyBorder());
+		btnAtras.setContentAreaFilled(false);
 		btnAtras.setVisible(false);
 		btnAtras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -282,7 +316,10 @@ public class WindowEditor extends JFrame {
 		
 		
 		
-		JButton btnNewButton_2 = new JButton("Ejecutar paso a paso");
+		JButton btnNewButton_2 = new JButton("Ejecutar paso a paso     ");
+		btnNewButton_2.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/preview.png")));
+		btnNewButton_2.setBorder(BorderFactory.createEmptyBorder());
+		btnNewButton_2.setContentAreaFilled(false);
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -351,7 +388,10 @@ public class WindowEditor extends JFrame {
 		});
 		menuBar.add(btnNewButton_2);
 		
-		JButton btnTiempoEjecucin = new JButton("Tiempo de ejecución");
+		JButton btnTiempoEjecucin = new JButton("Tiempo de ejecución     ");
+		btnTiempoEjecucin.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/text-width.png")));
+		btnTiempoEjecucin.setBorder(BorderFactory.createEmptyBorder());
+		btnTiempoEjecucin.setContentAreaFilled(false);
 		btnTiempoEjecucin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				modal.setVisible(true);
@@ -360,6 +400,18 @@ public class WindowEditor extends JFrame {
 			}
 		});
 		menuBar.add(btnTiempoEjecucin);
+		
+		JButton btnGraficar = new JButton("Graficar");
+		btnGraficar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				grapher.getJframe().setVisible(true);
+				
+			}
+		});
+		btnGraficar.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/table.png")));
+		btnGraficar.setBorder(BorderFactory.createEmptyBorder());
+		btnGraficar.setContentAreaFilled(false);
+		menuBar.add(btnGraficar);
 		
 		
 		
@@ -382,7 +434,7 @@ public class WindowEditor extends JFrame {
 		*/
 		 
 		 JScrollPane scrollPane_1 = new JScrollPane();
-		 scrollPane_1.setBounds(709, 41, 651, 316);
+		 scrollPane_1.setBounds(709, 43, 651, 326); 
 		 contentPane.add(scrollPane_1);
 		 this.textArea2 = new JTextPane();
 		 scrollPane_1.setViewportView(textArea2);
@@ -395,12 +447,9 @@ public class WindowEditor extends JFrame {
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					((editor) internalFrame).createBreakPoint();
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				//((editor) internalFrame).createBreakPoint();
+				modalPreguntar.setInternalFrame(internalFrame);
+				modalPreguntar.setVisible(true);
 			}
 		});
 		internalFrame.setVisible(true);
@@ -601,6 +650,15 @@ public class WindowEditor extends JFrame {
 		this.textArea2.setText(this.textArea2.getText()+"Estado de variables paso a paso");
 		for(int i=0;i<step;i++){
 			this.textArea2.setText(this.textArea2.getText()+"\n"+getLocalTableData(i));
+		}
+	}
+	
+	public void getTextLines(){
+		String code = ((editor) internalFrame).getTextArea().getText();
+		String[] data = code.split("\n");
+		
+		for(int i=0;i<data.length;i++){
+			System.out.println(data[i]);
 		}
 	}
 	
