@@ -2,7 +2,7 @@ package com.myorg.debuglanguage.interpreter.ast;
 
 import java.util.Map;
 
-public class Assign extends Lineable implements ASTNode,java.io.Serializable {
+public class Assign implements ASTNode,java.io.Serializable {
 	
 	/**
 	 * 
@@ -11,8 +11,8 @@ public class Assign extends Lineable implements ASTNode,java.io.Serializable {
 	private ASTNode id;
 	private ASTNode value;
 	
-	public Assign(ASTNode id, ASTNode value, String line) {
-		super(line);
+	public Assign(ASTNode id, ASTNode value) {
+		super();
 		this.id = id;
 		this.value = value;
 	}

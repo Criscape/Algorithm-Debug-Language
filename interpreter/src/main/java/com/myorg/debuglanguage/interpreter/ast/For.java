@@ -3,7 +3,7 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.List;
 import java.util.Map;
 
-public class For extends Lineable implements ASTNode,java.io.Serializable {
+public class For implements ASTNode,java.io.Serializable {
 	
 	/**
 	 * 
@@ -15,8 +15,8 @@ public class For extends Lineable implements ASTNode,java.io.Serializable {
 	private ASTNode ascDecType;
 	private List<ASTNode> body;
 	
-	public For(ASTNode assignation, ASTNode limit, ASTNode increment, ASTNode ascDecType, List<ASTNode> body, String line) {
-		super(line);
+	public For(ASTNode assignation, ASTNode limit, ASTNode increment, ASTNode ascDecType, List<ASTNode> body) {
+		super();
 		this.assignation = assignation;
 		this.limit = limit;
 		this.increment = increment;

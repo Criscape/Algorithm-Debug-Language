@@ -137,8 +137,8 @@ expression returns [ASTNode node]: assignation SEMICOLON {$node = $assignation.n
  | declaration {$node = $declaration.node;};
 
 assignation returns [ASTNode node, String line]: idorvector ASSIGN (
-	operation { $line = $idorvector.line + $ASSIGN.text + $operation.line; $node = new Assign($idorvector.node,$operation.node,$line); }
-	| list {$line = $list.line; $node = new Assign($idorvector.node,$list.node,$line); }
+	operation { $line = $idorvector.line + $ASSIGN.text + $operation.line; $node = new Assign($idorvector.node,$operation.node); }
+	| list {$line = $list.line; $node = new Assign($idorvector.node,$list.node); }
 );
 
 condition returns [ASTNode node, String line]: c1=condition OR t1=condition1 
@@ -191,11 +191,11 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 
 subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN subrutinecall_x RPAREN {
 	$line = $t1.text + $LPAREN.text + $subrutinecall_x.line + $RPAREN.text;
-	$node = new SubRutExec($t1.text,$subrutinecall_x.node,$line);
+	$node = new SubRutExec($t1.text,$subrutinecall_x.node);
 	}
 | t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {
 	$line = $t2.text + $POINT.text + $LPAREN.text + $ss2.line + $RPAREN.text;
-	$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node,$line);
+	$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);
 };
 
 subrutinecall_x returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
@@ -230,7 +230,7 @@ ifG returns [ASTNode node, String line]: IF LPAREN condition RPAREN t1=instructi
  }
  (ELSE t2=instruction {elseBody = $t2.node;})?
  {
- 	$node = new Conditional($condition.node,body,elseBody,$line);
+ 	$node = new Conditional($condition.node,body,elseBody);
  };
 		
 whileG returns [ASTNode node]: WHILE condition instruction
@@ -245,7 +245,7 @@ forG returns [ASTNode node, String line]: FOR LPAREN assignation for1 RPAREN ins
 	List<ASTNode> body = new ArrayList<>();
 	body = $instruction.node;
 	$line = $FOR.text + $LPAREN.text + $assignation.line + $for1.line + $RPAREN.text;
-	$node = new For($assignation.node,$for1.node[0],$for1.node[1],$for1.node[2],body,$line);	
+	$node = new For($assignation.node,$for1.node[0],$for1.node[1],$for1.node[2],body);	
 };
 
 for1 returns [ASTNode[] node, String line]: TO t1=operation INC t2=operation
