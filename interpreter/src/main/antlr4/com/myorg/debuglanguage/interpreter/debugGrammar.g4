@@ -26,6 +26,9 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	ListaEjecucion lista_exec = new ListaEjecucion(debuggerList);
 	symbolTable.put("lista_exec",lista_exec);
 	
+	symbolTable.put("ejecuto",false);
+	symbolTable.put("guardo",false);
+	
 	for (ASTNode n : subrt){
 		
 		n.execute(symbolTable,localSymbolTable);
@@ -35,6 +38,7 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	$main.node.execute(symbolTable,localSymbolTable);
 	/*((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add($main.node);*/
 	
+	((ListaEjecucion)symbolTable.get("lista_exec")).initExecuted();
 	
 	String filename = "test/lista_ejecucion.ntn";
 	
