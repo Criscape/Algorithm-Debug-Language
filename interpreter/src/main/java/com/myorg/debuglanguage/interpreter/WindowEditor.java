@@ -247,6 +247,8 @@ public class WindowEditor extends JFrame {
 
 				symbolTable = new HashMap<>();
 				localSymbolTable = new HashMap<>();
+				
+				symbolTable.put("guardo",true);
 					
 					
 					timer = new Timer(modal.getTime()*1000, new ActionListener(){
@@ -256,6 +258,7 @@ public class WindowEditor extends JFrame {
 							
 							if(step<list.getOrden().size()){
 								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
+								list.getExecuted().set(step, true);
 								writeInConsole();
 								step = step + 1;
 							}

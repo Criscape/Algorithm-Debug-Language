@@ -129,19 +129,6 @@ public class NaryTreeNode implements java.io.Serializable {
             				((TypeValue) symbolTable.get(variable)).getDataType();
             		retur += "\n";
     			}
-    			else{
-    				
-    				for(Map<String, Object> node : ((ListaDebug)symbolTable.get(variable)).getEntorno()){
-    					for(String key : node.keySet()){
-    						if(node.get(key) instanceof TypeValue){
-    							retur +="nombre: "+key+" , valor: "+((TypeValue) node.get(key)).getValue()+" , tipo: "+
-                        				((TypeValue) node.get(key)).getDataType();
-                        		retur += "\n";
-    						}
-    					}
-    				}
-    				
-    			}
         	}
     	}
     	
