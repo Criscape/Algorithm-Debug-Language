@@ -4,19 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainExec implements ASTNode,java.io.Serializable {
+public class MainExec extends Lineable implements ASTNode,java.io.Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<ASTNode> body;
-	private String line;
 	
 	public MainExec(List<ASTNode> body, String line) {
-		super();
+		super(line);
 		this.body = body;
-		this.line = line;
 	}
 
 	@Override
@@ -35,7 +33,4 @@ public class MainExec implements ASTNode,java.io.Serializable {
 		return null;
 	}
 	
-	public String getLine() {
-		return line;
-	}
 }

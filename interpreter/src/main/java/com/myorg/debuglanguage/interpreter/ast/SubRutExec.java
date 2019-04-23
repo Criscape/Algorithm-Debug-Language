@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SubRutExec implements ASTNode,java.io.Serializable {
+public class SubRutExec extends Lineable implements ASTNode,java.io.Serializable {
 
 	/**
 	 * 
@@ -18,8 +18,8 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 	private List<ASTNode> args;
 	private SubrutineSave subrutine;
 	
-	public SubRutExec(String name, List<ASTNode> args) {
-		super();
+	public SubRutExec(String name, List<ASTNode> args, String line) {
+		super(line);
 		this.name = name;
 		this.args = args;
 	}

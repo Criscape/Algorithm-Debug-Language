@@ -137,8 +137,8 @@ expression returns [ASTNode node]: assignation SEMICOLON {$node = $assignation.n
  | declaration {$node = $declaration.node;};
 
 assignation returns [ASTNode node, String line]: idorvector ASSIGN (
-	operation {$node = new Assign($idorvector.node,$operation.node); $line = $idorvector.line + $ASSIGN.text + $operation.line;}
-	| list {$node = new Assign($idorvector.node,$list.node); $line = $list.line;}
+	operation { $line = $idorvector.line + $ASSIGN.text + $operation.line; $node = new Assign($idorvector.node,$operation.node,$line); }
+	| list {$line = $list.line; $node = new Assign($idorvector.node,$list.node,$line); }
 );
 
 condition returns [ASTNode node, String line]: c1=condition OR t1=condition1 
@@ -189,16 +189,19 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | switchG {$node = $switchG.node;}
 | repeat {$node = $repeat.node;};
 
-subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN subrutinecall_x RPAREN {$node = new SubRutExec($t1.text,$subrutinecall_x.node);
-	$line = $t1.text + $LPAREN.text + $subrutinecall_x.line + $RPAREN.text;}
-| t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);
+subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN subrutinecall_x RPAREN {
+	$line = $t1.text + $LPAREN.text + $subrutinecall_x.line + $RPAREN.text;
+	$node = new SubRutExec($t1.text,$subrutinecall_x.node,$line);
+	}
+| t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {
 	$line = $t2.text + $POINT.text + $LPAREN.text + $ss2.line + $RPAREN.text;
+	$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node,$line);
 };
 
 subrutinecall_x returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
 | {$node = new ArrayList<>(); $line = "";};
 
-returnG returns [ASTNode node, String line]: RETURN operation {$node = new Retorno($operation.node); $line = $RETURN.text + $operation.line;};
+returnG returns [ASTNode node, String line]: RETURN operation { $line = $RETURN.text + $operation.line; $node = new Retorno($operation.node,$line); };
 			
 arguments returns [List<ASTNode> node, String line]: {
 	List<ASTNode> args = new ArrayList<>();
@@ -218,15 +221,16 @@ LCURLY (t1=data_auxiliar {components.add($t1.node); $line = $LCURLY.text + $t1.l
  	$line += $RCURLY.text;
  };
 
-ifG returns [ASTNode node]: IF condition t1=instruction 
+ifG returns [ASTNode node, String line]: IF LPAREN condition RPAREN t1=instruction 
  {
  	List<ASTNode> body = new ArrayList<>();
  	body = $t1.node;
  	List<ASTNode> elseBody = new ArrayList<>();
+ 	$line = $IF.text + $LPAREN.text + $condition.line + $RPAREN.text;
  }
  (ELSE t2=instruction {elseBody = $t2.node;})?
  {
- 	$node = new Conditional($condition.node,body,elseBody);
+ 	$node = new Conditional($condition.node,body,elseBody,$line);
  };
 		
 whileG returns [ASTNode node]: WHILE condition instruction

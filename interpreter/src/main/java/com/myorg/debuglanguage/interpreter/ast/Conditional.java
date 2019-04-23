@@ -3,7 +3,7 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.List;
 import java.util.Map;
 
-public class Conditional implements ASTNode,java.io.Serializable {
+public class Conditional extends Lineable implements ASTNode,java.io.Serializable {
 	
 	/**
 	 * 
@@ -13,8 +13,8 @@ public class Conditional implements ASTNode,java.io.Serializable {
 	private List<ASTNode> body;
 	private List<ASTNode> elseBody;
 	
-	public Conditional(ASTNode condition, List<ASTNode> body, List<ASTNode> elseBody) {
-		super();
+	public Conditional(ASTNode condition, List<ASTNode> body, List<ASTNode> elseBody, String line) {
+		super(line);
 		this.condition = condition;
 		this.body = body;
 		this.elseBody = elseBody;
