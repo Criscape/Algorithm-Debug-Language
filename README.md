@@ -18,7 +18,7 @@ La gramatica aplicada para el desarrollo del lenguaje es la siguiente:
  - expression **->** assignation SEMICOLON | structure | subrutinecall SEMICOLON | returnG SEMICOLON |
 	 - declaration
  - assignation **->** idorvector ASSIGN (operation | list)
-- condition **->** condition OR condition1 | condition1
+ - condition **->** condition OR condition1 | condition1
  - condition1 **->** condition1 AND condition2 | condition2
  - condition2 **->** condition2 EQUALS condition3 | condition2 ODD condition3 | condition3
  - condition3 **->** condition3 COMP operation | operation | LPAREN condition RPAREN
@@ -40,3 +40,42 @@ La gramatica aplicada para el desarrollo del lenguaje es la siguiente:
  - switch1 **->** switch2 COLON (expression)* BREAK SEMICOLON
  - switch2 **->** NUMBER | STR
  - repeat **->** REPEAT instruction UNTIL condition SEMICOLON
+ 
+## Lista de tokens
+Los tokens que utiliza la gramatica son los siguientes:
+  
+|  ID | TOKEN | - | ID | TOKEN |
+|--------|---------|---|---------|---------|
+| MAIN | 'main' | ----------- | FUNCTION | 'function' |
+| PROCEDURE | 'procedure' | ----------- | RETURN | 'return' |
+| OR | 'or' | ----------- | AND | 'and' |
+| IF | 'if' | ----------- | ELSE | 'else' |
+| WHILE | 'while' | ----------- | FOR | 'for' |
+| SWITCH | 'switch' | ----------- | BREAK | 'break' |
+| DEFAULT | 'default' | ----------- | INC | 'inc' |
+| DEC | 'dec' | ----------- | TO | 'to' |
+| DOWNTO | 'downto' | ----------- | REPEAT | 'repeat' |
+| UNTIL | 'until' | ----------- | PLUS | '+' |
+| MINUS | '-' | ----------- | TIMES | '*' |
+| DIVIDE | '/' | ----------- | EQUALS | '=' |
+| ODD | '<>' | ----------- | NEGATE | '!' |
+| POINT | '.' | ----------- | COMMA | ',' |
+| COLON | ':' | ----------- | SEMICOLON | ';' |
+| LPAREN | '(' | ----------- | RPAREN | ')' |
+| LCURLY | '{' | ----------- | RCURLY | '}' |
+| LSQUARE | '\[' | ----------- | RSQUARE | ']' |
+| ASSIGN | '<-' | ----------- |  |  |
+
+Y tokens basados en una expresion regular o agrupaciones:
+  
+|  ID | TOKEN |
+|--------|---------|
+| IOTYPE | 'in' \| 'out' \| 'inout' |
+| DATATYPE | 'int' \| 'char' \| 'float' \| 'boolean' \| 'string' \| 'list' |
+| BOOL | 'true' \| 'false' |
+| COMP | '<' \| '>' \| '<=' \| '>=' |
+| COMMENT | \[#] \[a-zA-Z_0-9/\-\.,;{}\[\] ()\r\t\n=<>\+-\*/%\"]* \[#] |
+| STR | \["] \[a-zA-Z_0-9/\-\.,; ]* \["] |
+| ID | \[a-zA-Z_]\[a-zA-Z0-9_]* |
+| NUMBER | \[0-9]+ |
+| WS | \[ \t\n\r] |
