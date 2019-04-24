@@ -32,3 +32,11 @@ La gramatica aplicada para el desarrollo del lenguaje es la siguiente:
  - returnG **->** RETURN operation
  - arguments **->** operation (COMMA operation)*
  - list **->** LCURLY data_auxiliar (COMMA data_auxiliar)* RCURLY
+ - ifG **->** IF LPAREN condition RPAREN instruction ELSE instruction
+ - whileG **->** WHILE condition instruction
+ - forG **->** FOR LPAREN assignation for1 RPAREN instruction
+ - for1 **->** TO operation INC | TO operation | DOWNTO operation INC | DOWNTO operation
+ - switchG **->** SWITCH LPAREN idorvector RPAREN LCURLY ((switch1)* DEFAULT COLON (expression)*)? RCURLY
+ - switch1 **->** switch2 COLON (expression)* BREAK SEMICOLON
+ - switch2 **->** NUMBER | STR
+ - repeat **->** REPEAT instruction UNTIL condition SEMICOLON
