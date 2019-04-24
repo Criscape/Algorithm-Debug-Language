@@ -189,16 +189,16 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 | switchG {$node = $switchG.node;}
 | repeat {$node = $repeat.node;};
 
-subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN subrutinecall_x RPAREN {
-	$line = $t1.text + $LPAREN.text + $subrutinecall_x.line + $RPAREN.text;
-	$node = new SubRutExec($t1.text,$subrutinecall_x.node);
+subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN sbc1=subrutinecall1 RPAREN {
+	$line = $t1.text + $LPAREN.text + $sbc1.line + $RPAREN.text;
+	$node = new SubRutExec($t1.text,$sbc1.node);
 	}
-| t2=ID POINT t3=ID LPAREN ss2=arguments? RPAREN {
+| t2=ID POINT t3=ID LPAREN sbc2=subrutinecall1 RPAREN {
 	$line = $t2.text + $POINT.text + $LPAREN.text + $ss2.line + $RPAREN.text;
-	$node = new SubRutExec($t2.text+"."+$t3.text,$ss2.node);
+	$node = new SubRutExec($t2.text+"."+$t3.text,$sbc2.node);
 };
 
-subrutinecall_x returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
+subrutinecall1 returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
 | {$node = new ArrayList<>(); $line = "";};
 
 returnG returns [ASTNode node, String line]: RETURN operation { $line = $RETURN.text + $operation.line; $node = new Retorno($operation.node); };
