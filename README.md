@@ -1,6 +1,5 @@
 # ADL - Lenguaje para el analisis de algoritmos recursivos e iterativos
 
-//Intro
 ## Gramatica implementada
 La gramatica aplicada para el desarrollo del lenguaje es la siguiente:
 
