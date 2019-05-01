@@ -1,15 +1,6 @@
 package com.myorg.debuglanguage.interpreter.ast;
 
-public abstract class Lineable {
+public interface Lineable {
 	
-	private String line;
-
-	public Lineable(String line) {
-		super();
-		this.line = line;
-	}
-	
-	public String getLine() {
-		return line;
-	}
+	public String getLine();
 }

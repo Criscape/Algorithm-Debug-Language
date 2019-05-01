@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainExec extends Lineable implements ASTNode,java.io.Serializable {
+public class MainExec implements ASTNode,java.io.Serializable {
 
 	/**
 	 * 
@@ -12,8 +12,8 @@ public class MainExec extends Lineable implements ASTNode,java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private List<ASTNode> body;
 	
-	public MainExec(List<ASTNode> body, String line) {
-		super(line);
+	public MainExec(List<ASTNode> body) {
+		super();
 		this.body = body;
 	}
 
@@ -24,9 +24,18 @@ public class MainExec extends Lineable implements ASTNode,java.io.Serializable {
 		
 		for (ASTNode n : this.body) {
 			
+
 			//n.execute(symbolTable, localSymbolTable);
-			
-			((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
+			if (n instanceof For || n instanceof While || n instanceof Conditional){
+
+				n.execute(symbolTable, localSymbolTable);
+			}else{
+
+				n.execute(symbolTable, localSymbolTable);
+				((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);	
+			}
+
+
 			
 		}
 						

@@ -22,11 +22,14 @@ public class Condition implements ASTNode,java.io.Serializable {
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
 		
+		Object obj1 = this.operand1.execute(symbolTable, localSymbolTable);
+		Object obj2 = this.operand2.execute(symbolTable, localSymbolTable);
+		
 		switch (this.symbol){
 		
 		case "OR":
 			
-			if ((boolean)this.operand1.execute(symbolTable, localSymbolTable) || (boolean)this.operand2.execute(symbolTable, localSymbolTable)){
+			if ((boolean)obj1 || (boolean)obj2){
 				
 				return true;
 			}else{
@@ -35,7 +38,7 @@ public class Condition implements ASTNode,java.io.Serializable {
 			
 		case "AND":
 			
-			if ((boolean)this.operand1.execute(symbolTable, localSymbolTable) && (boolean)this.operand2.execute(symbolTable, localSymbolTable)){
+			if ((boolean)obj1 && (boolean)obj2){
 				
 				return true;
 			}else{
@@ -44,18 +47,19 @@ public class Condition implements ASTNode,java.io.Serializable {
 			
 		case "=":
 			
-			if (this.operand1.execute(symbolTable, localSymbolTable) instanceof String && this.operand2.execute(symbolTable, localSymbolTable) instanceof String) {
+			if (obj1 instanceof String && obj2 instanceof String) {
 				
-				if (this.operand1.execute(symbolTable, localSymbolTable).toString().equals(this.operand2.execute(symbolTable, localSymbolTable).toString())){
+				if (obj1.toString().equals(obj2.toString())){
 					
 					return true;
 				}else{
+
 					return false;
 				}
 				
-			}else if(this.operand1.execute(symbolTable, localSymbolTable) instanceof Integer && this.operand2.execute(symbolTable, localSymbolTable) instanceof Integer){
+			}else if(obj1 instanceof Integer && obj2 instanceof Integer){
 
-				if ((int)this.operand1.execute(symbolTable, localSymbolTable) == (int)this.operand2.execute(symbolTable, localSymbolTable)){
+				if ((int)obj1 == (int)obj2){
 					
 					return true;
 				}else{
@@ -63,20 +67,20 @@ public class Condition implements ASTNode,java.io.Serializable {
 				}
 			}else{
 
-				if ((boolean)this.operand1.execute(symbolTable, localSymbolTable) == (boolean)this.operand2.execute(symbolTable, localSymbolTable)){
-					System.out.println("hereee");
+				if ((boolean)obj1 == (boolean)obj2){
+					
 					return true;
 				}else{
-					System.out.println("hereeemo");
+					
 					return false;
 				}
 			}
 			
 		case "<>":
 			
-			if (this.operand1.execute(symbolTable, localSymbolTable) instanceof String == this.operand2.execute(symbolTable, localSymbolTable) instanceof String) {
+			if (obj1 instanceof String == obj2 instanceof String) {
 				
-				if (this.operand1.execute(symbolTable, localSymbolTable).toString().equals(this.operand2.execute(symbolTable, localSymbolTable).toString())){
+				if (obj1.toString().equals(obj2.toString())){
 					
 					return false;
 				}else{
@@ -85,7 +89,7 @@ public class Condition implements ASTNode,java.io.Serializable {
 				
 			}else{
 				
-				if (this.operand1.execute(symbolTable, localSymbolTable) != this.operand2.execute(symbolTable, localSymbolTable)){
+				if (obj1 != obj2){
 					
 					return false;
 				}else{
@@ -95,7 +99,7 @@ public class Condition implements ASTNode,java.io.Serializable {
 			
 		case "<":
 			
-			if ((int)this.operand1.execute(symbolTable, localSymbolTable) < (int)this.operand2.execute(symbolTable, localSymbolTable)){
+			if ((int)obj2 < (int)obj2){
 				
 				return true;
 			}else{
@@ -104,7 +108,7 @@ public class Condition implements ASTNode,java.io.Serializable {
 		
 		case ">":
 			
-			if ((int)this.operand1.execute(symbolTable, localSymbolTable) > (int)this.operand2.execute(symbolTable, localSymbolTable)){
+			if ((int)obj1 > (int)obj2){
 				
 				return true;
 			}else{
@@ -113,7 +117,7 @@ public class Condition implements ASTNode,java.io.Serializable {
 		
 		case "<=":
 			
-			if ((int)this.operand1.execute(symbolTable, localSymbolTable) <= (int)this.operand2.execute(symbolTable, localSymbolTable)){
+			if ((int)obj1 <= (int)obj2){
 				
 				return true;
 			}else{
@@ -122,7 +126,7 @@ public class Condition implements ASTNode,java.io.Serializable {
 			
 		case ">=":
 			
-			if ((int)this.operand1.execute(symbolTable, localSymbolTable) >= (int)this.operand2.execute(symbolTable, localSymbolTable)){
+			if ((int)obj1 >= (int)obj2){
 				
 				return true;
 			}else{
