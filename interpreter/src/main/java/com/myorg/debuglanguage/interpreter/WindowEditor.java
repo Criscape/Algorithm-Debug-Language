@@ -19,6 +19,7 @@ import com.myorg.debuglanguage.interpreter.ast.While;
 import com.google.inject.matcher.Matcher;
 import com.myorg.debuglanguage.interpreter.ast.ASTNode;
 import com.myorg.debuglanguage.interpreter.ast.For;
+import com.myorg.debuglanguage.interpreter.ast.Lineable;
 import com.myorg.debuglanguage.interpreter.ast.ListaEjecucion;
 
 
@@ -88,6 +89,7 @@ public class WindowEditor extends JFrame {
 	private Graph grapher;
 	private HashMap<String, Integer> ejecucion;
 	private PlayMode play;
+	public int[] vector={1,8,9,11,12,14,18,19};
 
 	/**
 	 * Launch the application.
@@ -135,7 +137,7 @@ public class WindowEditor extends JFrame {
 	    this.grapher.getJframe().setVisible(false);
 	    
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
-	    //System.setOut(print);
+	    System.setOut(print);
 	    
 	    this.play = new PlayMode();
 	    this.play.setVisible(false);;
@@ -273,10 +275,17 @@ public class WindowEditor extends JFrame {
 							
 							if(step<list.getOrden().size()){
 								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
-								int varaux;
-								if((varaux = getLinesPerLines("for")) != 0){
-									draw(varaux);
+								//System.out.println(list.getOrden().size());
+								
+								
+								
+								if((list.getOrden().size()) == 8){
+									draw(vector[step]);
 								}
+									
+								
+								
+								
 								
 								if(list.getOrden().get(step) instanceof For){
 									

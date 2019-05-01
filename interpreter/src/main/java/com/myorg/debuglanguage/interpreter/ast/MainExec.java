@@ -24,9 +24,9 @@ public class MainExec extends Lineable implements ASTNode,java.io.Serializable {
 		
 		for (ASTNode n : this.body) {
 			
-			n.execute(symbolTable, localSymbolTable);
+			//n.execute(symbolTable, localSymbolTable);
 			
-			//((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
+			((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 			
 		}
 						
