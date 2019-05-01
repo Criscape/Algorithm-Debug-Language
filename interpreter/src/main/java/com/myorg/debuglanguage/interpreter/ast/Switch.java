@@ -29,15 +29,25 @@ public class Switch implements ASTNode,java.io.Serializable {
 			
 			for(Case x: cases){
 				
-				if( ((String)a).equals((String)x.getEvaluator().execute(symbolTable, localSymbolTable)) ){
+				Object obj1 = x.getEvaluator().execute(symbolTable, localSymbolTable);
+				
+				if(obj1 instanceof String){
 					
-					for(ASTNode y: x.getBody()){
+					if( ((String)a).equals((String)obj1) ){
 						
-						y.execute(symbolTable, localSymbolTable);
+						for(ASTNode y: x.getBody()){
+							
+							y.execute(symbolTable, localSymbolTable);
+							if (!(y instanceof For || y instanceof While || y instanceof Conditional || y instanceof Repeat || y instanceof Switch)){
+								
+								((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(y);
+							}
+						}
+						
+						executed = true;
 					}
-					
-					executed = true;
 				}
+				
 			}
 			
 			if (!executed){
@@ -45,22 +55,36 @@ public class Switch implements ASTNode,java.io.Serializable {
 				for(ASTNode z: defaultCase){
 					
 					z.execute(symbolTable, localSymbolTable);
+					if (!(z instanceof For || z instanceof While || z instanceof Conditional || z instanceof Repeat || z instanceof Switch)){
+						
+						((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(z);
+					}
 				}
 			}
 			
 		}else if(a instanceof Integer){
 			
-				for(Case x: cases){
+			for(Case x: cases){
 				
-				if( (Integer)a == (Integer)x.getEvaluator().execute(symbolTable, localSymbolTable) ){
+				Object obj1 = x.getEvaluator().execute(symbolTable, localSymbolTable);
+				
+				if (obj1 instanceof Integer){
 					
-					for(ASTNode y: x.getBody()){
+					if( (Integer)a == (Integer)obj1 ){
 						
-						y.execute(symbolTable, localSymbolTable);
+						for(ASTNode y: x.getBody()){
+							
+							y.execute(symbolTable, localSymbolTable);
+							if (!(y instanceof For || y instanceof While || y instanceof Conditional || y instanceof Repeat || y instanceof Switch)){
+								
+								((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(y);
+							}
+						}
+						
+						executed = true;
 					}
-					
-					executed = true;
 				}
+				
 			}
 			
 			if(!executed){
@@ -68,6 +92,11 @@ public class Switch implements ASTNode,java.io.Serializable {
 				for(ASTNode z: defaultCase){
 					
 					z.execute(symbolTable, localSymbolTable);
+
+					if (!(z instanceof For || z instanceof While || z instanceof Conditional || z instanceof Repeat || z instanceof Switch)){
+						
+						((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(z);
+					}
 				}
 			}
 			

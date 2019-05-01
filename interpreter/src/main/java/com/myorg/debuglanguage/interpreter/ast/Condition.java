@@ -98,8 +98,8 @@ public class Condition implements ASTNode,java.io.Serializable {
 			}
 			
 		case "<":
-			
-			if ((int)obj2 < (int)obj2){
+
+			if ((int)obj1 < (int)obj2){
 				
 				return true;
 			}else{

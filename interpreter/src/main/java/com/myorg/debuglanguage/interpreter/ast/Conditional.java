@@ -28,7 +28,7 @@ public class Conditional implements ASTNode,java.io.Serializable {
 			for (ASTNode n : this.body)
 			{
 				n.execute(symbolTable, localSymbolTable);
-				if (!(n instanceof For || n instanceof While || n instanceof Conditional)){
+				if (!(n instanceof For || n instanceof While || n instanceof Conditional || n instanceof Repeat || n instanceof Switch)){
 					
 					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 				}
@@ -39,7 +39,7 @@ public class Conditional implements ASTNode,java.io.Serializable {
 			for (ASTNode n : this.elseBody)
 			{
 				n.execute(symbolTable, localSymbolTable);
-				if (!(n instanceof For || n instanceof While || n instanceof Conditional)){
+				if (!(n instanceof For || n instanceof While || n instanceof Conditional || n instanceof Repeat || n instanceof Switch)){
 					
 					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 				}
