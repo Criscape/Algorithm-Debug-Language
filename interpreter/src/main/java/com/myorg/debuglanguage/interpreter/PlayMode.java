@@ -161,6 +161,7 @@ public class PlayMode extends JFrame {
 		
 	}
 	
+	
 	public void setArbol(NaryTreeNode arbol, int complejidad){
 		this.arbol = arbol;
 		this.complejidad = complejidad;

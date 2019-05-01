@@ -89,7 +89,10 @@ public class WindowEditor extends JFrame {
 	private Graph grapher;
 	private HashMap<String, Integer> ejecucion;
 	private PlayMode play;
-	public int[] vector={1,8,9,11,12,14,18,19};
+	private HashMap<Integer, Integer> times;
+	private int score;
+	JLabel lblScoreP;
+	
 
 	/**
 	 * Launch the application.
@@ -129,7 +132,7 @@ public class WindowEditor extends JFrame {
 	    this.time = 0;
 	    this.modal = new Modal();
 	    modal.setVisible(false);
-	    this.modalPreguntar =  new ModalPreguntar();
+	    this.modalPreguntar =  new ModalPreguntar(this);
 	    modalPreguntar.setVisible(false);
 	    
 	    //Initialize grapher
@@ -139,10 +142,12 @@ public class WindowEditor extends JFrame {
 	    JTextFieldPrintStream print = new JTextFieldPrintStream(out);
 	    System.setOut(print);
 	    
+	    this.score = 0;
 	    this.play = new PlayMode();
 	    this.play.setVisible(false);;
 	    
 	    ejecucion = new HashMap<String, Integer>();
+	    times = new HashMap<Integer, Integer>();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1412, 752);
@@ -166,7 +171,7 @@ public class WindowEditor extends JFrame {
 	    
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 939, 43);
+		menuBar.setBounds(0, 0, 1360, 43);
 		menuBar.setBackground(SystemColor.control);
 		menuBar.setBorderPainted(false);
 		contentPane.add(menuBar);
@@ -262,6 +267,7 @@ public class WindowEditor extends JFrame {
 				
 				symbolTable = new HashMap<>();
 				ejecucion = new HashMap<>();
+				times = new HashMap<>();
 				localSymbolTable = new HashMap<>();
 				
 				symbolTable.put("guardo",true);
@@ -277,14 +283,26 @@ public class WindowEditor extends JFrame {
 								list.getOrden().get(step).execute(symbolTable, localSymbolTable);
 								//System.out.println(list.getOrden().size());
 								
+								int tmpValue = 0;
 								
-								
-								if((list.getOrden().size()) == 8){
-									draw(vector[step]);
-								}
+								if(list.getOrden().get(step) instanceof Lineable){
+
+									String tmpKey = ((Lineable) list.getOrden().get(step) ).getLine();
+									
+									if( (tmpValue = getLinesPerLines(tmpKey)) != 0 ){
+										draw(tmpValue-1);
+									}
 									
 								
-								
+									if(times.containsKey(tmpValue)){
+										times.put(tmpValue, times.get(tmpValue)+1);
+									}
+									else{
+										times.put(tmpValue, 1);
+									}
+									
+									
+								}
 								
 								
 								if(list.getOrden().get(step) instanceof For){
@@ -379,9 +397,10 @@ public class WindowEditor extends JFrame {
 				if(step > 0){
 					localSymbolTable = new HashMap<String, Object>();
 					symbolTable = new HashMap<String, Object>();
+					step = step - 1;
 					moveBackwards();
 					wrtieInConsoleAll();
-					step = step - 1;
+					
 					
 				}
 			}
@@ -488,7 +507,7 @@ public class WindowEditor extends JFrame {
 		btnGraficar.setContentAreaFilled(false);
 		menuBar.add(btnGraficar);
 		
-		JButton btnMiniQuiz = new JButton("Mini Quiz");
+		JButton btnMiniQuiz = new JButton("Mini Quiz          ");
 		btnMiniQuiz.setBorder(BorderFactory.createEmptyBorder());
 		btnMiniQuiz.setContentAreaFilled(false);
 		btnMiniQuiz.addActionListener(new ActionListener() {
@@ -500,6 +519,15 @@ public class WindowEditor extends JFrame {
 		});
 		btnMiniQuiz.setIcon(new ImageIcon(WindowEditor.class.getResource("/images/paste.png")));
 		menuBar.add(btnMiniQuiz);
+		
+		JLabel lblScore = new JLabel("SCORE: ");
+		lblScore.setForeground(new Color(0, 102, 153));
+		lblScore.setFont(new Font("Tahoma", Font.BOLD, 17));
+		menuBar.add(lblScore);
+		
+		lblScoreP = new JLabel("0");
+		lblScoreP.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		menuBar.add(lblScoreP);
 		
 		
 		
@@ -537,6 +565,8 @@ public class WindowEditor extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				//((editor) internalFrame).createBreakPoint();
 				modalPreguntar.setInternalFrame(internalFrame);
+				modalPreguntar.setLines(getTextL());
+				modalPreguntar.setTimes(times);
 				modalPreguntar.setVisible(true);
 			}
 		});
@@ -695,7 +725,11 @@ public class WindowEditor extends JFrame {
 	public void moveForward(){
 		
 		list.getOrden().get(step).execute(symbolTable, localSymbolTable);
-	
+		
+		if(list.getOrden().get(step) instanceof Lineable){
+
+			draw(getLinesPerLines(  ((Lineable)list.getOrden().get(step)).getLine())-1);
+		}
 	}
 	
 	public void moveBackwards(){
@@ -703,6 +737,11 @@ public class WindowEditor extends JFrame {
 		
 		for(int i=0;i<step;i++){
 			list.getOrden().get(i).execute(symbolTable, localSymbolTable);
+		}
+		
+		if(list.getOrden().get(step-1) instanceof Lineable){
+
+			draw(getLinesPerLines(((Lineable)list.getOrden().get(step-1)).getLine())-1);
 		}
 	}
 	
@@ -753,6 +792,19 @@ public class WindowEditor extends JFrame {
 		return code;
 	}
 	
+	public String[] getTextL(){
+		String code = ((editor) internalFrame).getTextArea().getText();
+		String[] data = code.split("\n");
+		
+		
+		for(int i=0;i<data.length;i++){
+			data[i].replaceAll("\\s+","");
+		}
+		
+		return data;
+	}
+	
+	
 	public int getLinesPerLines(String find){
 		String code = ((editor) internalFrame).getTextArea().getText();
 		String[] data = code.split("\n");
@@ -760,6 +812,9 @@ public class WindowEditor extends JFrame {
 		
 		for(int i=0;i<data.length;i++){
 			strTmp = data[i];
+			strTmp = strTmp.replaceAll("\\s+","");
+			
+			
 			if(strTmp.matches(".*"+find+".*")){
 				return i+1;
 			}
@@ -767,6 +822,8 @@ public class WindowEditor extends JFrame {
 		
 		return 0;
 	}
+	
+
 	
 	public void draw(int line){
 		((editor) internalFrame).draw(line);
@@ -799,6 +856,19 @@ public class WindowEditor extends JFrame {
 	public int complejidad(){
 		return buscaFor();
 	}
+	
+	public void setScore(int score){
+		if(this.score + score>0){
+			this.score = this.score + score;
+		}
+		else{
+			this.score = 0;
+		}
+		
+		
+		lblScoreP.setText(Integer.toString(this.score));
+	}
+	
 	
 	class JTextFieldPrintStream extends PrintStream {
         public JTextFieldPrintStream(OutputStream out) {

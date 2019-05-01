@@ -32,7 +32,8 @@ public class MainExec implements ASTNode,java.io.Serializable {
 				n.execute(symbolTable, localSymbolTable);
 				((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);	
 			}
-			
+
+
 			
 		}
 						
