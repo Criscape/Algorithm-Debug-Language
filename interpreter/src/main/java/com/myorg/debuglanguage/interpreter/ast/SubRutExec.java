@@ -51,7 +51,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 				for (int i = 0; i < this.subrutine.getParameters().size(); i++){
 					
 					Parameter parameter = (Parameter)this.subrutine.getParameters().get(i);
-
+					System.out.println("sdsdsd");
 					TypeValue x = new TypeValue(parameter.getDataType(),parameter.getIoType(),
 							this.args.get(i).execute(symbolTable, localSymbolTable));
 					

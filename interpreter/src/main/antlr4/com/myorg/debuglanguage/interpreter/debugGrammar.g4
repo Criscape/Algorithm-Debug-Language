@@ -25,6 +25,7 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	List<ASTNode> debuggerList = new ArrayList<>();
 	ListaEjecucion lista_exec = new ListaEjecucion(debuggerList);
 	symbolTable.put("lista_exec",lista_exec);
+	symbolTable.put("exec",false);
 	
 	for (ASTNode n : subrt){
 		
@@ -62,7 +63,7 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 main returns [ASTNode node, String line]: MAIN LPAREN RPAREN instruction
 {
 	$line = $MAIN.text + $LPAREN.text + $RPAREN.text;
-	$node = new MainExec($instruction.node,$line);	
+	$node = new MainExec($instruction.node);	
 };
 
 subrutine returns [ASTNode node]: function {$node = $function.node;} 
@@ -358,7 +359,7 @@ RSQUARE: ']';
 ASSIGN: '<-';
 
 COMMENT: [#][a-zA-Z_0-9/\-\.,;{}\[\] ()\r\t\n=<>\+-\*/%\"]*[#] -> skip;
-STR: ["][a-zA-Z_0-9/\-\.,; ]*["];
+STR: ["][a-zA-Z_0-9/\-\.,; :]*["];
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 NUMBER: [0-9]+;
 

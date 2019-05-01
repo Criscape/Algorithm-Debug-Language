@@ -20,14 +20,19 @@ public class While implements ASTNode,java.io.Serializable {
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
-		
 		while ((boolean)this.condition.execute(symbolTable, localSymbolTable))
 		{
 			for (ASTNode n : this.body)
 			{
 				n.execute(symbolTable, localSymbolTable);
+				
+				if (!(n instanceof For || n instanceof While || n instanceof Conditional)){
+					
+					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
+				}
 			}
 		}
+		
 		return null;
 	}
 

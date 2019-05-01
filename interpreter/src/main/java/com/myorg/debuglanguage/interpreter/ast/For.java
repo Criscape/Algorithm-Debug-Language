@@ -35,6 +35,9 @@ public class For implements ASTNode,java.io.Serializable {
 		int x_increment = (int)this.increment.execute(symbolTable, localSymbolTable);
 		String x_type = this.ascDecType.execute(symbolTable, localSymbolTable).toString();
 
+		ForExec new_for = new ForExec(1,this.assignation,this.limit,this.increment,this.ascDecType,this.body,id,x_increment);
+		((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(new_for);	
+		
 		if (x_type.equals("asc")){
 			
 			for (int i = Integer.parseInt(a.getValue().execute(symbolTable, localSymbolTable).toString()); i <= x_limit; i = i + x_increment){
@@ -42,11 +45,18 @@ public class For implements ASTNode,java.io.Serializable {
 				for (ASTNode x: this.body){
 					
 					x.execute(symbolTable, localSymbolTable);
+					if (!(x instanceof For || x instanceof While || x instanceof Conditional)){
+						
+						((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
+					}	
 				}
 				
 				int new_value = ((Integer)((TypeValue)localSymbolTable.get(id)).getValue()) + x_increment; 
 				TypeValue v_x = new TypeValue("int","in", new_value);
 				localSymbolTable.put(id, v_x);
+				
+				ForExec new_for2 = new ForExec(2,this.assignation,this.limit,this.increment,this.ascDecType,this.body,id,x_increment);
+				((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(new_for2);
 			}
 		}else{
 			
@@ -55,15 +65,26 @@ public class For implements ASTNode,java.io.Serializable {
 				for (ASTNode x: this.body){
 					
 					x.execute(symbolTable, localSymbolTable);
+					if (!(x instanceof For || x instanceof While || x instanceof Conditional)){
+						
+						((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
+					}
 				}
 				
 				int new_value = ((Integer)((TypeValue)localSymbolTable.get(id)).getValue()) - x_increment; 
 				TypeValue v_x = new TypeValue("int","in", new_value);
 				localSymbolTable.put(id, v_x);
+				
+				ForExec new_for2 = new ForExec(3,this.assignation,this.limit,this.increment,this.ascDecType,this.body,id,x_increment);
+				((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(new_for2);
 			}
 		}
 		
 		localSymbolTable.remove(a.getId().toString());
+		
+		ForExec new_for3 = new ForExec(4,this.assignation,this.limit,this.increment,this.ascDecType,this.body,id,x_increment);
+		((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(new_for3);
+		
 		return null;
 	}
 	
