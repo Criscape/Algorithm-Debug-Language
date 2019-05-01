@@ -10,10 +10,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.List;
+
 import javax.swing.JTextField;
 import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.event.ActionEvent;
 
 public class ModalPreguntar extends JFrame {
@@ -22,6 +26,10 @@ public class ModalPreguntar extends JFrame {
 	private JTextField textField;
 	private int valor;
 	private JInternalFrame internalFrame;
+	private HashMap times;
+	private ArrayList<String> lines;
+	private JLabel lblcuntoCreesApuesto;
+	private WindowEditor windoweditor;
 
 	/**
 	 * Launch the application.
@@ -30,7 +38,7 @@ public class ModalPreguntar extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ModalPreguntar frame = new ModalPreguntar();
+					ModalPreguntar frame = new ModalPreguntar(null);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				} catch (Exception e) {
@@ -43,14 +51,19 @@ public class ModalPreguntar extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ModalPreguntar() {
+	public ModalPreguntar(WindowEditor windoweditor) {
 		this.valor = 0;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.times = new HashMap<>();
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		this.windoweditor = windoweditor;
+		
+		this.lines = new ArrayList<String>();
 		
 		JLabel lblcuntasVecesCree = new JLabel("¿Cuántas veces se ejecuta la linea?");
 		lblcuntasVecesCree.setFont(new Font("Trebuchet MS", Font.PLAIN, 24));
@@ -64,7 +77,7 @@ public class ModalPreguntar extends JFrame {
 		textField.setBounds(130, 143, 157, 44);
 		contentPane.add(textField);
 		
-		JLabel lblcuntoCreesApuesto = new JLabel("¿Cuántas veces crees? ");
+		lblcuntoCreesApuesto = new JLabel("¿Cuántas veces crees? ");
 		lblcuntoCreesApuesto.setForeground(new Color(102, 205, 170));
 		lblcuntoCreesApuesto.setFont(new Font("Trebuchet MS", Font.PLAIN, 18));
 		lblcuntoCreesApuesto.setBounds(116, 68, 251, 72);
@@ -78,8 +91,8 @@ public class ModalPreguntar extends JFrame {
 				if(textField.getText() != ""){
 					valor = Integer.parseInt(textField.getText());
 				}
-				
-				setVisible(false);
+				verificar(lines, times , ((editor) internalFrame).getCurrentLine()+1);
+				//setVisible(false);
 				execBreakPoint();
 			}
 		});
@@ -103,5 +116,44 @@ public class ModalPreguntar extends JFrame {
 	
 	public void setInternalFrame(JInternalFrame internalFrame){
 		this.internalFrame = internalFrame;
+	}
+	
+	public void verificar(ArrayList lines, HashMap mapa, int line){
+		int cantidad = Integer.parseInt(textField.getText());
+		
+		
+		if(mapa.containsKey(line)){
+			if(cantidad == (Integer)mapa.get(line)){
+				
+				textField.setForeground(new Color(41, 128, 185));
+				lblcuntoCreesApuesto.setForeground(new Color(41, 128, 185));
+				lblcuntoCreesApuesto.setText("          Felicidades");
+				windoweditor.setScore(5);
+			}
+			else{
+				textField.setForeground(new Color(231, 76, 60));
+				lblcuntoCreesApuesto.setForeground(new Color(231, 76, 60));
+				lblcuntoCreesApuesto.setText("Revisa de nuevo");
+				windoweditor.setScore(-5);
+			}
+		}
+		
+		
+	}
+	
+	public void setScore(int score){
+		this.windoweditor.setScore(score);
+	}
+	
+	
+	
+	public void setLines(String[] linesV){
+		for(int i=0;i<linesV.length;i++){
+			lines.add(linesV[i]);
+		}
+	}
+	
+	public void setTimes(HashMap times){
+		this.times = times;
 	}
 }

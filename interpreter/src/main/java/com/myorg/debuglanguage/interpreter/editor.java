@@ -127,6 +127,11 @@ public class editor extends JInternalFrame {
 	   return this.textArea;
    }
    
+   public int getCurrentLine() {
+		// TODO Auto-generated method stub
+		return syntaxTextArea.getCaretLineNumber();
+	}
+   
    public void draw(int line){
 	   if(line == -1){
 		   syntaxTextArea.removeLineHighlight(beforeLineO);
@@ -161,5 +166,7 @@ public class editor extends JInternalFrame {
          }
       });
    }
+
+
 
 }
