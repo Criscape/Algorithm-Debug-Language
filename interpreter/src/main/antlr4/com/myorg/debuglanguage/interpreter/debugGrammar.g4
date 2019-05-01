@@ -195,7 +195,7 @@ subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN sbc1=subrutineca
 	$node = new SubRutExec($t1.text,$sbc1.node);
 	}
 | t2=ID POINT t3=ID LPAREN sbc2=subrutinecall1 RPAREN {
-	$line = $t2.text + $POINT.text + $LPAREN.text + $ss2.line + $RPAREN.text;
+	$line = $t2.text + $POINT.text + $LPAREN.text + $sbc2.line + $RPAREN.text;
 	$node = new SubRutExec($t2.text+"."+$t3.text,$sbc2.node);
 };
 
