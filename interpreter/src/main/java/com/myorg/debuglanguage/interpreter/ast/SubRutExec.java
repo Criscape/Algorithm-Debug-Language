@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SubRutExec implements ASTNode,java.io.Serializable {
+public class SubRutExec implements ASTNode,java.io.Serializable, Lineable {
 
 	/**
 	 * 
@@ -17,12 +17,60 @@ public class SubRutExec implements ASTNode,java.io.Serializable {
 	private String name;
 	private List<ASTNode> args;
 	private SubrutineSave subrutine;
+	private String line;
 	
-	public SubRutExec(String name, List<ASTNode> args) {
+	public SubRutExec(String name, List<ASTNode> args, String line) {
 		super();
 		this.name = name;
 		this.args = args;
+		this.line = line;
 	}
+
+	@Override
+	public String getLine() {
+		// TODO Auto-generated method stub
+		return this.line;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
+
+
+
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		super.finalize();
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
+
+
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {

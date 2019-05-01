@@ -114,11 +114,12 @@ parameters returns [List<ASTNode> node]: {List<ASTNode> param = new ArrayList<>(
 	$node = param;
 };
 
-declaration returns [ASTNode node]: {List<ASTNode> ids = new ArrayList<>();}
-DATATYPE t1=idorvector {ids.add($t1.node);}
- (COMMA t2=idorvector {ids.add($t2.node);})* SEMICOLON
+declaration returns [ASTNode node, String line]: {List<ASTNode> ids = new ArrayList<>();}
+DATATYPE t1=idorvector {ids.add($t1.node); $line = $DATATYPE.text + $t1.line;}
+ (COMMA t2=idorvector {ids.add($t2.node); $line = $line + $COMMA.text +$t2.line;})* SEMICOLON
  {
- 	$node = new Declaration($DATATYPE.text,ids);
+ 	$line = $line + $SEMICOLON.text;
+ 	$node = new Declaration($DATATYPE.text,ids,$line);
  };
 
 idorvector returns [ASTNode node, String line]: d2=ID {$node = new Constant($d2.text,""); $line = $d2.text;}
@@ -137,9 +138,9 @@ expression returns [ASTNode node]: assignation SEMICOLON {$node = $assignation.n
  | returnG SEMICOLON {$node = $returnG.node;}
  | declaration {$node = $declaration.node;};
 
-assignation returns [ASTNode node, String line]: idorvector ASSIGN (
-	operation { $line = $idorvector.line + $ASSIGN.text + $operation.line; $node = new Assign($idorvector.node,$operation.node); }
-	| list {$line = $list.line; $node = new Assign($idorvector.node,$list.node); }
+assignation returns [ASTNode node, String line]: idorvector ASSIGN {$line = $idorvector.line + $ASSIGN.text;} (
+	operation { $line = $line + $operation.line; $node = new Assign($idorvector.node,$operation.node,$line); }
+	| list {$line = $line + $list.line; $node = new Assign($idorvector.node,$list.node,$line); }
 );
 
 condition returns [ASTNode node, String line]: c1=condition OR t1=condition1 
@@ -162,15 +163,15 @@ condition3 returns [ASTNode node, String line]: c1=condition3 COMP t1=operation
 		| LPAREN condition RPAREN {$node = $condition.node; $line = $LPAREN + $condition.line + $RPAREN;};
 		
 operation returns [ASTNode node, String line]: t1=operation {$node = $t1.node; $line = $t1.line;}
- PLUS s1=operation1 {$node = new Evaluation($node, $s1.node, $PLUS.text); $line = $line + $s1.line;}
+ PLUS s1=operation1 {$node = new Evaluation($node, $s1.node, $PLUS.text); $line = $line + $PLUS.text + $s1.line;}
  | t2=operation {$node = $t2.node; $line = $t2.line;} 
- MINUS s2=operation1 {$node = new Evaluation($node, $s2.node, $MINUS.text); $line = $line + $s2.line;}
+ MINUS s2=operation1 {$node = new Evaluation($node, $s2.node, $MINUS.text); $line = $line + $MINUS.text + $s2.line;}
  | s3=operation1 {$node = $s3.node; $line = $s3.line;};
 
 operation1 returns [ASTNode node, String line]: t1=operation1 {$node = $t1.node; $line = $t1.line;}
- TIMES ss1=operation2 {$node = new Evaluation($node, $ss1.node, $TIMES.text); $line = $line + $ss1.line;}
+ TIMES ss1=operation2 {$node = new Evaluation($node, $ss1.node, $TIMES.text); $line = $line + $TIMES.text + $ss1.line;}
  | t2=operation1 {$node = $t2.node; $line = $t2.line;}
- DIVIDE ss2=operation2 {$node = new Evaluation($node, $ss2.node, $DIVIDE.text); $line = $line + $ss2.line;}
+ DIVIDE ss2=operation2 {$node = new Evaluation($node, $ss2.node, $DIVIDE.text); $line = $line + $DIVIDE.text + $ss2.line;}
  | ss3=operation2 {$node = $ss3.node; $line = $ss3.line;};
 		
 operation2 returns [ASTNode node, String line]: idorvector {$node = new VarRef($idorvector.node); $line = $idorvector.line;}
@@ -192,11 +193,11 @@ structure returns [ASTNode node]: ifG {$node = $ifG.node;}
 
 subrutinecall returns [ASTNode node, String line]: t1=ID LPAREN sbc1=subrutinecall1 RPAREN {
 	$line = $t1.text + $LPAREN.text + $sbc1.line + $RPAREN.text;
-	$node = new SubRutExec($t1.text,$sbc1.node);
+	$node = new SubRutExec($t1.text,$sbc1.node,$line);
 	}
 | t2=ID POINT t3=ID LPAREN sbc2=subrutinecall1 RPAREN {
 	$line = $t2.text + $POINT.text + $LPAREN.text + $sbc2.line + $RPAREN.text;
-	$node = new SubRutExec($t2.text+"."+$t3.text,$sbc2.node);
+	$node = new SubRutExec($t2.text+"."+$t3.text,$sbc2.node,$line);
 };
 
 subrutinecall1 returns [List<ASTNode> node, String line]: arguments {$node = $arguments.node; $line = $arguments.line;}
