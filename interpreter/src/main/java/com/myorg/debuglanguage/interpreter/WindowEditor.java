@@ -53,6 +53,8 @@ import java.awt.Rectangle;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.SystemColor;
+import java.awt.Dialog.ModalExclusionType;
+
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 import javax.swing.JMenuBar;
@@ -374,12 +376,17 @@ public class WindowEditor extends JFrame {
 		btnSiguiente.setVisible(false);
 		btnSiguiente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Estás en el paso "+step);
-				if(step < list.getOrden().size()){
-					moveForward();
-					writeInConsole();
-					step = step + 1;
+				
+				if(!modalPreguntar.getVisibility()){
+					System.out.println("Estás en el paso "+step);
+					if(step < list.getOrden().size()){
+						moveForward();
+						writeInConsole();
+						step = step + 1;
+						modalPreguntar.setVisibility(true);
+					}
 				}
+				
 			}
 		});
 		menuBar.add(btnSiguiente);
@@ -394,17 +401,20 @@ public class WindowEditor extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("Estás en el paso "+step);
 				
-				if(step > 0){
-					localSymbolTable = new HashMap<String, Object>();
-					symbolTable = new HashMap<String, Object>();
-					symbolTable.put("ejecuto",true);
+				if(!modalPreguntar.getVisibility()){
+					if(step > 0){
+						localSymbolTable = new HashMap<String, Object>();
+						symbolTable = new HashMap<String, Object>();
+						symbolTable.put("ejecuto",true);
 
-					step = step - 1;
-					moveBackwards();
-					wrtieInConsoleAll();
-					
-					
+						step = step - 1;
+						moveBackwards();
+						wrtieInConsoleAll();
+						modalPreguntar.setVisibility(true);
+						
+					}
 				}
+				
 			}
 		});
 		menuBar.add(btnAtras);
@@ -731,8 +741,9 @@ public class WindowEditor extends JFrame {
 		list.getOrden().get(step).execute(symbolTable, localSymbolTable);
 		
 		if(list.getOrden().get(step) instanceof Lineable){
-
-			draw(getLinesPerLines(  ((Lineable)list.getOrden().get(step)).getLine())-1);
+			int line;
+			draw(line = getLinesPerLines(  ((Lineable)list.getOrden().get(step)).getLine())-1);
+			this.modalPreguntar.setCurrentLine(line);
 		}
 	}
 	
@@ -878,6 +889,10 @@ public class WindowEditor extends JFrame {
 		
 		
 		lblScoreP.setText(Integer.toString(this.score));
+	}
+	
+	public int getStep(){
+		return this.step;
 	}
 	
 	

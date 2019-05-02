@@ -30,6 +30,8 @@ public class ModalPreguntar extends JFrame {
 	private ArrayList<String> lines;
 	private JLabel lblcuntoCreesApuesto;
 	private WindowEditor windoweditor;
+	private boolean visibility;
+	private int currentLine;
 
 	/**
 	 * Launch the application.
@@ -61,6 +63,8 @@ public class ModalPreguntar extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		this.currentLine = 0;
+		
 		this.windoweditor = windoweditor;
 		
 		this.lines = new ArrayList<String>();
@@ -91,7 +95,9 @@ public class ModalPreguntar extends JFrame {
 				if(textField.getText() != ""){
 					valor = Integer.parseInt(textField.getText());
 				}
-				verificar(lines, times , ((editor) internalFrame).getCurrentLine()+1);
+				//verificar(lines, times , ((editor) internalFrame).getCurrentLine()+1);
+				verificar(lines, times , windoweditor.getStep());
+				
 				//setVisible(false);
 				execBreakPoint();
 			}
@@ -121,7 +127,7 @@ public class ModalPreguntar extends JFrame {
 	public void verificar(ArrayList lines, HashMap mapa, int line){
 		int cantidad = Integer.parseInt(textField.getText());
 		
-		
+		line = 3;
 		if(mapa.containsKey(line)){
 			if(cantidad == (Integer)mapa.get(line)){
 				
@@ -129,6 +135,7 @@ public class ModalPreguntar extends JFrame {
 				lblcuntoCreesApuesto.setForeground(new Color(41, 128, 185));
 				lblcuntoCreesApuesto.setText("          Felicidades");
 				windoweditor.setScore(5);
+				this.visibility = false;
 			}
 			else{
 				textField.setForeground(new Color(231, 76, 60));
@@ -156,4 +163,18 @@ public class ModalPreguntar extends JFrame {
 	public void setTimes(HashMap times){
 		this.times = times;
 	}
+	
+	public void setVisibility(boolean state){
+		this.setVisible(state);
+		visibility = state;
+	}
+	
+	public void setCurrentLine(int line){
+		this.currentLine = line;
+	}
+	
+	public boolean getVisibility(){
+		return this.visibility;
+	}
+	
 }
