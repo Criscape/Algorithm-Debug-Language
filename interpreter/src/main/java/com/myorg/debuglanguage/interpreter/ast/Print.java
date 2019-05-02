@@ -22,14 +22,21 @@ public class Print implements ASTNode,java.io.Serializable {
 		
 		if(x instanceof Integer){
 			
-			System.out.println(x.toString());
+			if((Boolean) symbolTable.get("ejecuto")){
+				System.out.println(x.toString());
+			}
+			
 
 		}else if(x instanceof String || x instanceof Boolean){
 			
-			System.out.println(x.toString());
+			if((Boolean) symbolTable.get("ejecuto")){
+				System.out.println(x.toString());
+			}
 		}else{
 			
-			System.out.println(x);
+			if((Boolean) symbolTable.get("ejecuto")){
+				System.out.println(x);
+			}
 		}
 		
 		return null;

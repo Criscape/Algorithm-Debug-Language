@@ -25,7 +25,7 @@ program: {List<ASTNode> subrt = new ArrayList<>();}
 	List<ASTNode> debuggerList = new ArrayList<>();
 	ListaEjecucion lista_exec = new ListaEjecucion(debuggerList);
 	symbolTable.put("lista_exec",lista_exec);
-	symbolTable.put("exec",false);
+	symbolTable.put("ejecuto",false);
 	
 	for (ASTNode n : subrt){
 		
