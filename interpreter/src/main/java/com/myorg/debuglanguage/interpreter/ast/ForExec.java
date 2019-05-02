@@ -3,7 +3,7 @@ package com.myorg.debuglanguage.interpreter.ast;
 import java.util.List;
 import java.util.Map;
 
-public class ForExec implements ASTNode, java.io.Serializable{
+public class ForExec implements ASTNode, java.io.Serializable, Lineable{
 	
 	private static final long serialVersionUID = 1L;
 	private int action;
@@ -14,9 +14,10 @@ public class ForExec implements ASTNode, java.io.Serializable{
 	private List<ASTNode> body;
 	private String idIN;
 	private int incIN;
+	private String line;
 	
 	public ForExec(int action, ASTNode assignation, ASTNode limit, ASTNode increment, ASTNode ascDecType,
-			List<ASTNode> body,String idIN, int incIN) {
+			List<ASTNode> body,String idIN, int incIN, String line) {
 		super();
 		this.action = action;
 		this.assignation = assignation;
@@ -26,7 +27,54 @@ public class ForExec implements ASTNode, java.io.Serializable{
 		this.body = body;
 		this.idIN = idIN;
 		this.incIN = incIN;
+		this.line = line;
 	}
+
+	@Override
+	public String getLine() {
+		// TODO Auto-generated method stub
+		return this.line;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+
+
+
+	@Override
+	public boolean equals(Object arg0) {
+		// TODO Auto-generated method stub
+		return super.equals(arg0);
+	}
+
+
+
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		super.finalize();
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
+
+
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {

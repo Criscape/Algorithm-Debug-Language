@@ -397,6 +397,8 @@ public class WindowEditor extends JFrame {
 				if(step > 0){
 					localSymbolTable = new HashMap<String, Object>();
 					symbolTable = new HashMap<String, Object>();
+					symbolTable.put("ejecuto",true);
+
 					step = step - 1;
 					moveBackwards();
 					wrtieInConsoleAll();
@@ -461,6 +463,8 @@ public class WindowEditor extends JFrame {
 				step = 0;
 				symbolTable = new HashMap<>();
 				localSymbolTable = new HashMap<>();
+				symbolTable.put("ejecuto",true);
+
 				//System.out.println(list.getOrden().size());
 				//list.getOrden().get(0).execute(symbolTable, localSymbolTable);
 				//list.getOrden().get(3).execute(symbolTable, localSymbolTable);

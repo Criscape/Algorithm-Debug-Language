@@ -247,7 +247,7 @@ forG returns [ASTNode node, String line]: FOR LPAREN assignation for1 RPAREN ins
 	List<ASTNode> body = new ArrayList<>();
 	body = $instruction.node;
 	$line = $FOR.text + $LPAREN.text + $assignation.line + $for1.line + $RPAREN.text;
-	$node = new For($assignation.node,$for1.node[0],$for1.node[1],$for1.node[2],body);	
+	$node = new For($assignation.node,$for1.node[0],$for1.node[1],$for1.node[2],body,$line);	
 };
 
 for1 returns [ASTNode[] node, String line]: TO t1=operation INC t2=operation
