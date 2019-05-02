@@ -74,7 +74,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable, Lineable {
 
 	@Override
 	public Object execute(Map<String, Object> symbolTable, Map<String, Object> localSymbolTable) {
-		
+
 		Object dato = null; // Variable para el return de la función
 		
 		if(symbolTable.containsKey(this.name)){
@@ -252,6 +252,7 @@ public class SubRutExec implements ASTNode,java.io.Serializable, Lineable {
 				ListSave list_generated = (ListSave)((TypeValue)localSymbolTable.get(nombre)).getValue();
 				
 				dato = list_generated.getList().get(get_x);
+
 			}else if(this.name.matches("\\w+\\."+"size")){
 				
 				String nombre = this.name.substring(0,this.name.indexOf("."));

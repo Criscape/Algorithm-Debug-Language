@@ -2,7 +2,7 @@ package com.myorg.debuglanguage.interpreter.ast;
 
 import java.util.List;
 
-public class Case {
+public class Case implements java.io.Serializable{
 	
 	private ASTNode evaluator;
 	private List<ASTNode> body;

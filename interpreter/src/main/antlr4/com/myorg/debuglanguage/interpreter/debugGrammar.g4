@@ -275,7 +275,8 @@ for1 returns [ASTNode[] node, String line]: TO t1=operation INC t2=operation
 	$line = $DOWNTO.text + $t6.line;
 };
 	
-switchG returns [ASTNode node]: SWITCH LPAREN idorvector RPAREN
+switchG returns [ASTNode node]: SWITCH LPAREN 
+(idorvector {$node = new VarRef($idorvector.node);} | subrutinecall {$node = $subrutinecall.node;}) RPAREN
 { 
 	List<Case> cases = new ArrayList<>();
 	List<ASTNode> defaultCase = new ArrayList<>();
@@ -284,9 +285,9 @@ switchG returns [ASTNode node]: SWITCH LPAREN idorvector RPAREN
  	DEFAULT COLON (t1=expression {defaultCase.add($t1.node);})*
  )? RCURLY
 {
-	$node = new VarRef($idorvector.node);
 	$node = new Switch($node,cases,defaultCase);
 };
+
 switch1 returns [Case node]: switch2 COLON
 {
 	List<ASTNode> body = new ArrayList<>();

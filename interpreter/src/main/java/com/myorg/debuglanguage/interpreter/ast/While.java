@@ -26,7 +26,7 @@ public class While implements ASTNode,java.io.Serializable {
 			{
 				n.execute(symbolTable, localSymbolTable);
 				
-				if (!(n instanceof For || n instanceof While || n instanceof Conditional)){
+				if (!(n instanceof For || n instanceof While || n instanceof Conditional || n instanceof Repeat || n instanceof Switch)){
 					
 					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
 				}

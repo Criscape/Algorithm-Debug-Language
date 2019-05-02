@@ -24,9 +24,7 @@ public class MainExec implements ASTNode,java.io.Serializable {
 		
 		for (ASTNode n : this.body) {
 			
-
-			//n.execute(symbolTable, localSymbolTable);
-			if (n instanceof For || n instanceof While || n instanceof Conditional){
+			if (n instanceof For || n instanceof While || n instanceof Conditional || n instanceof Repeat || n instanceof Switch){
 
 				n.execute(symbolTable, localSymbolTable);
 			}else{

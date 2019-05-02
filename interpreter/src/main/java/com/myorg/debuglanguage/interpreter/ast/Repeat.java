@@ -25,9 +25,14 @@ public class Repeat implements ASTNode,java.io.Serializable {
 			for (ASTNode n : this.body) 
 			{
 				n.execute(symbolTable, localSymbolTable);
+				
+				if (!(n instanceof For || n instanceof While || n instanceof Conditional || n instanceof Repeat || n instanceof Switch)){
+					
+					((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(n);
+				}
 			}
-			
-		}while((boolean)this.condition.execute(symbolTable, localSymbolTable) == false);
+
+		}while((boolean)this.condition.execute(symbolTable, localSymbolTable));
 		
 		return null;
 	}

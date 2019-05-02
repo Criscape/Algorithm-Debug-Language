@@ -45,7 +45,7 @@ public class For implements ASTNode,java.io.Serializable {
 				for (ASTNode x: this.body){
 					
 					x.execute(symbolTable, localSymbolTable);
-					if (!(x instanceof For || x instanceof While || x instanceof Conditional)){
+					if (!(x instanceof For || x instanceof While || x instanceof Conditional  || x instanceof Repeat || x instanceof Switch)){
 						
 						((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
 					}	
@@ -65,7 +65,7 @@ public class For implements ASTNode,java.io.Serializable {
 				for (ASTNode x: this.body){
 					
 					x.execute(symbolTable, localSymbolTable);
-					if (!(x instanceof For || x instanceof While || x instanceof Conditional)){
+					if (!(x instanceof For || x instanceof While || x instanceof Conditional || x instanceof Repeat || x instanceof Switch)){
 						
 						((ListaEjecucion)symbolTable.get("lista_exec")).getOrden().add(x);
 					}

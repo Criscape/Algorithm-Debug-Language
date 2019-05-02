@@ -22,7 +22,7 @@ public class Print implements ASTNode,java.io.Serializable {
 		
 		if(x instanceof Integer){
 			
-			System.out.println(Integer.parseInt(x.toString()));
+			System.out.println(x.toString());
 
 		}else if(x instanceof String || x instanceof Boolean){
 			
