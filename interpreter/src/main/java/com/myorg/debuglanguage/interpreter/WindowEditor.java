@@ -814,6 +814,13 @@ public class WindowEditor extends JFrame {
 			strTmp = data[i];
 			strTmp = strTmp.replaceAll("\\s+","");
 			
+			if(find.contains("(") || find.contains("")){
+				find = find.replaceAll("\\(", "");
+				find = find.replaceAll("\\)","");
+				strTmp = strTmp.replaceAll("\\(", "");
+				strTmp = strTmp.replaceAll("\\)", "");
+				
+			}
 			
 			if(strTmp.matches(".*"+find+".*")){
 				return i+1;
